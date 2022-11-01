@@ -1,13 +1,11 @@
-package com.gospel.backendcloud;
+package com.gospel.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendcloudApplication {
-
+public class BackendApplication {
     public static void main(String[] args) {
-        SpringApplication.run(BackendcloudApplication.class, args);
+        SpringApplication.run(BackendApplication.class,args);
     }
-
 }

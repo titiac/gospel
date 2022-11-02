@@ -3,6 +3,7 @@ package com.gospel.backend.service.impl.user;
 import com.gospel.backend.pojo.User;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.service.user.LoginService;
+import com.gospel.backend.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -18,8 +20,6 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public Map<String, String> getToken(String username, String password) {
@@ -31,8 +31,12 @@ public class LoginServiceImpl implements LoginService {
         UserDetailsImpl loginUser=(UserDetailsImpl) authenticate.getPrincipal();
         User user=loginUser.getUser();
 
+        String jwt= JwtUtil.createJWT(user.getId().toString());
 
-        System.out.println(passwordEncoder.encode("123456"));
-        return null;
+        Map<String,String> map=new HashMap<>();
+        map.put("error_message","success");
+        map.put("token",jwt);
+
+        return map;
     }
 }

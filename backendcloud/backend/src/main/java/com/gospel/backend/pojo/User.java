@@ -15,8 +15,8 @@ public class User {
     private String number;
     private String name;
     private String password;
-    private char flag;
+    private Integer flag;
     private String photo;
     private String profile;
-    private char status;
+    private Integer status;
 }

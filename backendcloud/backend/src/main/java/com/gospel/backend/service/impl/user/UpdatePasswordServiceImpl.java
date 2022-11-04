@@ -67,7 +67,7 @@ public class UpdatePasswordServiceImpl implements UpdatePasswordService {
             return map;
         }
 
-        if(newPassword!=confirmedPassword){
+        if(!newPassword.equals(confirmedPassword)){
             map.put("error_message","输入新密码不一致");
             return map;
         }

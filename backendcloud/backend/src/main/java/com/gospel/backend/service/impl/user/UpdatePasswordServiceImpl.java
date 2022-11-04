@@ -57,9 +57,7 @@ public class UpdatePasswordServiceImpl implements UpdatePasswordService {
             return map;
         }
 
-        String encodedOldPassword=passwordEncoder.encode(oldPassword);
-
-        if(!user.getPassword().equals(encodedOldPassword)){
+        if(!passwordEncoder.matches(oldPassword, user.getPassword())){
             map.put("error_message","原密码不正确");
             return map;
         }

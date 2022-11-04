@@ -42,37 +42,24 @@ public class UpdatePasswordServiceImpl implements UpdatePasswordService {
         String confirmedPassword=data.get("confirmedPassword");
         Map<String ,String > map=new HashMap<>();
 
-        if(oldPassword==null){
+        if(oldPassword==null||oldPassword.length()==0){
             map.put("error_message","请输入原密码");
             return map;
         }
 
-        if(newPassword==null){
+        if(newPassword==null||newPassword.length()==0){
             map.put("error_message","请输入新密码");
             return map;
         }
 
-        if(confirmedPassword==null){
+        if(confirmedPassword==null||confirmedPassword.length()==0){
             map.put("error_message","请再次输入新密码");
             return map;
         }
 
-        if(oldPassword.length()==0){
-            map.put("error_message","请输入原密码");
-            return map;
-        }
+        String encodedOldPassword=passwordEncoder.encode(oldPassword);
 
-        if(newPassword.length()==0){
-            map.put("error_message","请输入新密码");
-            return map;
-        }
-
-        if(confirmedPassword.length()==0){
-            map.put("error_message","请再次输入新密码");
-            return map;
-        }
-
-        if(oldPassword!=user.getPassword()){
+        if(!user.getPassword().equals(encodedOldPassword)){
             map.put("error_message","原密码不正确");
             return map;
         }

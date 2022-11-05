@@ -1,7 +1,9 @@
 package com.gospel.backend.component;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.gospel.backend.mapper.SingleMessageMapper;
 import com.gospel.backend.mapper.UserMapper;
+import com.gospel.backend.pojo.SingleMessage;
 import com.gospel.backend.pojo.User;
 import com.gospel.backend.utils.JwtAuthentication;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +33,20 @@ public class WebSocketServer {
     private User user;
     private Session session = null;
     public static UserMapper userMapper;
-
+    public static SingleMessageMapper singleMessageMapper;
     @Autowired
     public void setUserMapper(UserMapper userMapper) {
         WebSocketServer.userMapper = userMapper;
     }
 
+    @Autowired
+    public void setSingleMessageMapper(SingleMessageMapper singleMessageMapper) {
+        WebSocketServer.singleMessageMapper = singleMessageMapper;
+    }
 
     @OnOpen
     public void onOpen(Session session, @PathParam("token") String token) throws IOException{
+        // websocket 连接时启动
         Integer userId = JwtAuthentication.getUserId(token);
         this.user = userMapper.selectById(userId);
         log.info("Socket open: "+userId);
@@ -51,6 +58,7 @@ public class WebSocketServer {
 
     @OnClose
     public void onClose() {
+        // websocket 连接关闭时触发
         Integer userId = this.user.getId();
         log.info("Socket close: "+ userId);
         WebSocketServer.sockets.remove(userId);
@@ -59,14 +67,19 @@ public class WebSocketServer {
     }
 
     @OnMessage
-    public void onMessage(String message, Session session) {
+    public void onMessage(String data) {
         // 从Client接收消息
-        JSONObject data = JSONObject.parseObject(message);
-        Integer to = Integer.parseInt(data.getString("to"));
-        Integer from = this.user.getId();
-        String msg = data.getString("msg");
-        if(userMapper.selectById(to) != null) {
-            sockets.get(to).sendMessage(msg);
+        SingleMessage singleMessage = JSON.parseObject(data, SingleMessage.class);
+        Integer to = singleMessage.getUserTo();
+        
+        if(sockets.get(to) != null) {   // 目标用户存在socket，直接发送并存入数据库
+            singleMessage.setIsRead(1);
+            sockets.get(to).sendMessage(singleMessage.toString());
+//            System.out.println(singleMessage.toString());
+            singleMessageMapper.insert(singleMessage);
+        } else {        // 目标不存在socket, 直接存入数据库
+            singleMessage.setIsRead(0);
+            singleMessageMapper.insert(singleMessage);
         }
     }
 

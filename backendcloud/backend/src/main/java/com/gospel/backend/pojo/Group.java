@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 /**
  * @program: gospel
  * @description: 群表
@@ -23,6 +25,6 @@ public class Group {
     private String groupName;       // 群名称
     private String photo;           // 群头像
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
-    private String createTime;      // 群创建时间
+    private Date createTime;      // 群创建时间
     private String profile;         // 群简介
 }

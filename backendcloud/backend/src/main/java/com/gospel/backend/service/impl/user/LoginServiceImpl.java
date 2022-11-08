@@ -1,5 +1,7 @@
 package com.gospel.backend.service.impl.user;
 
+import com.gospel.backend.common.R;
+import com.gospel.backend.common.ResultEnum;
 import com.gospel.backend.pojo.User;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.service.user.LoginService;
@@ -27,7 +29,7 @@ public class LoginServiceImpl implements LoginService {
 
 
     @Override
-    public Map<String, String> getToken(String username, String password) {
+    public R getToken(String username, String password) {
         UsernamePasswordAuthenticationToken authenticationToken=
                 new UsernamePasswordAuthenticationToken(username,password);
 
@@ -38,10 +40,8 @@ public class LoginServiceImpl implements LoginService {
 
         String jwt= JwtUtil.createJWT(user.getId().toString());
 
-        Map<String,String> map=new HashMap<>();
-        map.put("error_message","success");
-        map.put("token",jwt);
-
-        return map;
+        return R.ok().resultEnum(ResultEnum.LOGIN_SUCCESS)
+                .data("userInfo",user)
+                .data("token",jwt);
     }
 }

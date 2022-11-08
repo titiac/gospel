@@ -32,7 +32,7 @@ public class SingleMessage {
     private String fileRawName; // 文件的源名称
     private String message;     // 消息、 文件路径
     private String messageType; // 消息类型: emoji/text/img/file/video/audio
-    private String flag;
+    private String flag;        // 单聊和群聊   single/ group
     private Integer isRead;     // 消息是否已读的, 0 未读， 1已读
 }
 

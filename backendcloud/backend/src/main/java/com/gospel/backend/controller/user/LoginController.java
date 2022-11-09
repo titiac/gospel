@@ -2,6 +2,7 @@ package com.gospel.backend.controller.user;
 
 import com.gospel.backend.common.R;
 import com.gospel.backend.pojo.User;
+import com.gospel.backend.pojo.vo.LoginVo;
 import com.gospel.backend.service.user.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +18,9 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping("/user/login/")
-    public R getToken(@RequestBody User user){
-        String username=user.getName();
-        String password=user.getPassword();
+    public R getToken(@RequestBody LoginVo loginVo){
+        String username=loginVo.getAccount();
+        String password=loginVo.getPassword();
         return loginService.getToken(username,password);
     }
 

@@ -1,5 +1,6 @@
 package com.gospel.backend.controller.user;
 
+import com.gospel.backend.common.R;
 import com.gospel.backend.service.user.InfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +13,8 @@ public class InfoController {
     @Autowired
     private InfoService infoService;
 
-    @GetMapping("/user/info/")
-    public Map<String ,String > getInfo(){
+    @GetMapping("/getUserInfo")
+    public R getInfo(){
         return infoService.getInfo();
     }
 

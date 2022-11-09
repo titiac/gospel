@@ -1,5 +1,6 @@
 package com.gospel.backend.service.impl.user;
 
+import com.gospel.backend.common.R;
 import com.gospel.backend.pojo.User;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.service.user.InfoService;
@@ -19,24 +20,13 @@ import java.util.Map;
 @Service
 public class InfoServiceImpl implements InfoService {
     @Override
-    public Map<String, String> getInfo() {
+    public R getInfo() {
         UsernamePasswordAuthenticationToken authentication=
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
         UserDetailsImpl loginUser=(UserDetailsImpl)authentication.getPrincipal();
         User user=loginUser.getUser();
-
-        Map<String ,String > map=new HashMap<>();
-        map.put("error_message","success");
-        map.put("id",user.getId().toString());
-        map.put("number",user.getNumber());
-        map.put("name",user.getName());
-        map.put("flag",user.getFlag().toString());
-        map.put("photo",user.getPhoto());
-        map.put("profile",user.getProfile());
-        map.put("status",user.getStatus().toString());
-
-
-        return map;
+        
+        return R.ok().data("userInfo", user);
     }
 }

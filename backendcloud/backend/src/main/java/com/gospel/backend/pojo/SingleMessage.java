@@ -23,7 +23,7 @@ public class SingleMessage {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer userFrom;   //  谁发送的
-    private Integer userTo;     //  发给谁的， 如果为群消息， 则为空
+    private Integer userTo;     //  发给谁的
     private String senderNickname;// 发送者昵称
     private String senderPhoto; // 发送者头像
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "Asia/Shanghai")

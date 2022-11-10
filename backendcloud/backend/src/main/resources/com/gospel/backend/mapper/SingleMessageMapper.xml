@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gospel.backend.mapper.SingleMessageMapper">
+    <update id="setIsRead">
+        update single_message set is_read = 1 where user_from = #{friendId} and user_to = #{myselfId};
+    </update>
+</mapper>

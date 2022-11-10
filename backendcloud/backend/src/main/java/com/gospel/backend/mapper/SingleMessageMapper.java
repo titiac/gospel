@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface SingleMessageMapper extends BaseMapper<SingleMessage> {
+    void setIsRead(Integer myselfId, Integer friendId);
 }

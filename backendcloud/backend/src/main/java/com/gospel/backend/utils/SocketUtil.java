@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -71,6 +72,7 @@ public class SocketUtil {
         SocketIOClient socketClient = getSocketClient(userId);
         singleMessage.setId(null);
         singleMessage.setIsRead(0);
+        SimpleDateFormat sdf=new SimpleDateFormat("yyMMddHHmmss");
         singleMessage.setSendTime(new Date());
         if (Objects.nonNull(socketClient) ){ // 如果在线
             socketClient.sendEvent(sendChannel, singleMessage);
@@ -103,7 +105,7 @@ public class SocketUtil {
                 socketIOClient.sendEvent(sendChannel, groupMessageVo);
             }
         }
-        
+        SimpleDateFormat sdf=new SimpleDateFormat("yyMMddHHmmss");
         GroupMessage groupMessage = new GroupMessage(
                 null,
                 groupMessageVo.getUserFrom(),

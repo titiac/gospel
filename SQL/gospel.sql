@@ -11,7 +11,7 @@
  Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 09/11/2022 19:26:05
+ Date: 10/11/2022 14:48:38
 */
 
 SET NAMES utf8mb4;
@@ -72,33 +72,39 @@ INSERT INTO `group_member` VALUES (2, 1, 12, NULL, 1);
 INSERT INTO `group_member` VALUES (3, 1, 13, 'admin', 1);
 
 -- ----------------------------
--- Table structure for single_message
+-- Table structure for message
 -- ----------------------------
-DROP TABLE IF EXISTS `single_message`;
-CREATE TABLE `single_message`  (
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `group_id` int NULL DEFAULT NULL,
   `user_from` int NULL DEFAULT NULL,
   `user_to` int NULL DEFAULT NULL,
   `send_time` datetime NULL DEFAULT NULL,
   `file_raw_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `message` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `message_type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `flag` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `is_read` int NULL DEFAULT NULL,
+  `message` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `conversation_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '私聊消息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '消息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of single_message
+-- Records of message
 -- ----------------------------
-INSERT INTO `single_message` VALUES (7, NULL, 11, 12, '2022-09-01 12:13:34', NULL, 'hello', 'text', 'single', 1);
-INSERT INTO `single_message` VALUES (8, NULL, 11, 12, '2022-10-01 12:13:34', NULL, 'hello', 'text', 'single', 0);
-INSERT INTO `single_message` VALUES (9, NULL, 11, 12, '2022-10-01 12:13:34', NULL, 'hello', 'text', 'single', 0);
-INSERT INTO `single_message` VALUES (10, 1, 11, NULL, '2022-10-01 12:13:34', NULL, 'hello', 'text', 'group', 0);
-INSERT INTO `single_message` VALUES (11, 1, 11, NULL, '2022-10-01 12:13:34', NULL, 'hello', 'text', 'group', 0);
-INSERT INTO `single_message` VALUES (12, 1, 11, NULL, '2022-10-01 12:13:34', NULL, 'hello', 'text', 'group', 0);
-INSERT INTO `single_message` VALUES (13, 1, 11, NULL, '2022-10-01 12:13:34', NULL, 'hello', 'text', 'group', 0);
+INSERT INTO `message` VALUES (7, NULL, 11, 12, '2022-09-01 12:13:34', NULL, 'text', 'hello', 'single');
+INSERT INTO `message` VALUES (8, NULL, 11, 12, '2022-10-01 12:13:34', NULL, 'text', 'hello', 'single');
+INSERT INTO `message` VALUES (9, NULL, 11, 12, '2022-10-01 12:13:34', NULL, 'text', 'hello', 'single');
+INSERT INTO `message` VALUES (10, 1, 11, NULL, '2022-10-01 12:13:34', NULL, 'text', 'hello', 'group');
+INSERT INTO `message` VALUES (11, 1, 11, NULL, '2022-10-01 12:13:34', NULL, 'text', 'hello', 'group');
+INSERT INTO `message` VALUES (12, 1, 11, NULL, '2022-10-01 12:13:34', NULL, 'text', 'hello', 'group');
+INSERT INTO `message` VALUES (13, 1, 11, NULL, '2022-10-01 12:13:34', NULL, 'text', 'hello', 'group');
+INSERT INTO `message` VALUES (14, NULL, 12, 11, '2022-11-05 21:18:11', '', 'text', 'hello', 'single');
+INSERT INTO `message` VALUES (15, NULL, 12, 11, '2022-11-05 21:18:11', '', 'text', 'hello', 'single');
+INSERT INTO `message` VALUES (16, NULL, 12, 11, '2022-11-05 21:18:11', '', 'text', 'hello', 'single');
+INSERT INTO `message` VALUES (17, NULL, 11, 13, '2022-11-05 21:18:11', '', 'text', 'hello', 'single');
+INSERT INTO `message` VALUES (18, NULL, 11, 13, '2022-11-05 21:18:11', '', 'text', 'hello', 'single');
+INSERT INTO `message` VALUES (19, NULL, 11, 12, '2022-11-05 21:18:11', '', 'text', '我是赵谦', 'single');
+INSERT INTO `message` VALUES (20, NULL, 12, 11, '2022-11-05 21:18:11', '', 'text', '我是钱牧', 'single');
 
 -- ----------------------------
 -- Table structure for user

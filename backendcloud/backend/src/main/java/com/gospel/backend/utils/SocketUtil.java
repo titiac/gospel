@@ -1,15 +1,21 @@
 package com.gospel.backend.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.annotation.OnEvent;
+import com.gospel.backend.mapper.GroupMemberMapper;
 import com.gospel.backend.mapper.MessageMapper;
+import com.gospel.backend.pojo.Group;
+import com.gospel.backend.pojo.GroupMember;
 import com.gospel.backend.pojo.Message;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +37,9 @@ public class SocketUtil {
     @Autowired
     private MessageMapper messageMapper;
     
+    @Autowired
+    private GroupMemberMapper groupMemberMapper;
+    
     /**
      * 监听频道为CHANNEL_SYSTEM的消息
      */
@@ -43,7 +52,8 @@ public class SocketUtil {
             Integer userTo = message.getUserTo();
             sendToOne(userTo, message, "CHANNEL_SYSTEM");
         } else if(Objects.equals(conversationType, "group")) {  // 如果为私聊消息
-            System.out.println("群聊消息");
+            Integer GroupId = message.getGroupId();
+            sendToGroup(GroupId, message, "CHANNEL_SYSTEM");
         }
     }
     
@@ -57,20 +67,26 @@ public class SocketUtil {
         if (Objects.nonNull(socketClient) ){ // 如果在线
             //单独给他发消息
             socketClient.sendEvent(sendChannel, message);
-        } else {
-            System.out.println("用户" + userId + "离线");
         }
         messageMapper.insert(message);
     }
-
-    public void sendToAll(Map<String, Object> msg, String sendChannel) {
-        if (sockets.isEmpty()){
-            return;
+    
+    /**
+     * 群聊消息的发送 
+     */
+    public void sendToGroup(Integer groupId, Message message, String sendChannel) {
+        message.setId(null);
+        QueryWrapper<GroupMember> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("group_id", groupId).and(w -> w.eq("member_status", 1));
+        List<GroupMember> groupMembers = groupMemberMapper.selectList(queryWrapper);
+        for(GroupMember groupMember: groupMembers) {
+            Integer userId = groupMember.getUserId();
+            SocketIOClient socketIOClient = getSocketClient(userId);
+            if(Objects.nonNull(socketIOClient)) {
+                socketIOClient.sendEvent(sendChannel, message);
+            }
         }
-        //给在这个频道的每个客户端发消息
-        for (Map.Entry<Integer, SocketIOClient> entry : sockets.entrySet()) {
-            entry.getValue().sendEvent(sendChannel, msg);
-        }
+        messageMapper.insert(message);
     }
     
     /**

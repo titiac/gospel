@@ -19,16 +19,17 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Message {
+public class SingleMessage {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Integer groupId;    //  群id
     private Integer userFrom;   //  谁发送的
     private Integer userTo;     //  发给谁的， 如果为群消息， 则为空
+    private String senderNickname;// 发送者昵称
+    private String senderPhoto; // 发送者头像
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "Asia/Shanghai")
     private Date sendTime;      //  发送时间
-    private String fileRawName; //  文件源名称
+    private String fileRawName; //  文件原名称
     private String messageType; //  消息类型： emoji/text/img/file/video
     private String message;     //  消息
-    private String conversationType;        //  区分单聊消息和群聊消息
+    private Integer isRead;
 }

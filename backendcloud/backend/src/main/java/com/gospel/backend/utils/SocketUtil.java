@@ -5,21 +5,21 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.annotation.OnEvent;
 import com.gospel.backend.mapper.GroupMemberMapper;
-import com.gospel.backend.mapper.MessageMapper;
-import com.gospel.backend.pojo.Group;
+import com.gospel.backend.mapper.GroupMessageMapper;
+import com.gospel.backend.mapper.SingleMessageMapper;
 import com.gospel.backend.pojo.GroupMember;
-import com.gospel.backend.pojo.Message;
-import io.swagger.models.auth.In;
+import com.gospel.backend.pojo.GroupMessage;
+import com.gospel.backend.pojo.SingleMessage;
+import com.gospel.backend.pojo.vo.GroupMessageVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @program: backendcloud
@@ -35,58 +35,88 @@ public class SocketUtil {
     public static ConcurrentMap<Integer, SocketIOClient> sockets = new ConcurrentHashMap<>();
     
     @Autowired
-    private MessageMapper messageMapper;
+    private SingleMessageMapper singleMessageMapper;
+    
+    @Autowired
+    private GroupMessageMapper groupMessageMapper;
     
     @Autowired
     private GroupMemberMapper groupMemberMapper;
     
     /**
-     * 监听频道为CHANNEL_SYSTEM的消息
+     * 监听频道为Single_Message的消息
      */
-    @OnEvent(value = "CHANNEL_SYSTEM")
-    public void systemDataListener(String data) {
-        Message message = JSONObject.parseObject(data, Message.class);
-        String conversationType = message.getConversationType();
-        System.out.println(conversationType);
-        if(Objects.equals(conversationType, "single")) { // 如果为私聊消息
-            Integer userTo = message.getUserTo();
-            sendToOne(userTo, message, "CHANNEL_SYSTEM");
-        } else if(Objects.equals(conversationType, "group")) {  // 如果为私聊消息
-            Integer GroupId = message.getGroupId();
-            sendToGroup(GroupId, message, "CHANNEL_SYSTEM");
-        }
+    @OnEvent(value = "Single_Message")
+    public void listenSingleMessage(String data) throws InterruptedException {
+        SingleMessage singleMessage = JSONObject.parseObject(data, SingleMessage.class);
+        Integer userTo = singleMessage.getUserTo();
+        sendToOne(userTo, singleMessage, "Single_Message");
+    }
+    
+    /**
+     *  监听 群聊消息
+     */
+    @OnEvent(value = "Group_Message")
+    public void listenGroupMessage(String data) {
+        GroupMessageVo groupMessageVo = JSONObject.parseObject(data, GroupMessageVo.class);
+        Integer groupId = groupMessageVo.getGroupId();
+        sendToGroup(groupId, groupMessageVo, "Group_Message");
     }
     
     /**
      *  私聊消息的发送
      */
-    public void sendToOne(Integer userId, Message message,String sendChannel) {
+    public void sendToOne(Integer userId, SingleMessage singleMessage,String sendChannel) throws InterruptedException {
         //拿出某个客户端信息
         SocketIOClient socketClient = getSocketClient(userId);
-        message.setId(null);
+        singleMessage.setId(null);
+        singleMessage.setIsRead(0);
+        singleMessage.setSendTime(new Date());
         if (Objects.nonNull(socketClient) ){ // 如果在线
-            //单独给他发消息
-            socketClient.sendEvent(sendChannel, message);
+            socketClient.sendEvent(sendChannel, singleMessage);
+            System.out.println(singleMessage);
+            TimeUnit.MILLISECONDS.sleep(200);
+            singleMessage.setIsRead(1);
         }
-        messageMapper.insert(message);
+        singleMessageMapper.insert(singleMessage);
     }
     
     /**
      * 群聊消息的发送 
      */
-    public void sendToGroup(Integer groupId, Message message, String sendChannel) {
-        message.setId(null);
+    public void sendToGroup(Integer groupId, GroupMessageVo groupMessageVo, String sendChannel) {
+        groupMessageVo.setId(null);
+        groupMessageVo.setIsRead(0);
+        /** 查询群聊中的人 */
         QueryWrapper<GroupMember> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("group_id", groupId).and(w -> w.eq("member_status", 1));
         List<GroupMember> groupMembers = groupMemberMapper.selectList(queryWrapper);
+        
+        List<Integer> isRead = new ArrayList<>();     /** 用于存储已读的人的id */
+        
         for(GroupMember groupMember: groupMembers) {
             Integer userId = groupMember.getUserId();
             SocketIOClient socketIOClient = getSocketClient(userId);
             if(Objects.nonNull(socketIOClient)) {
-                socketIOClient.sendEvent(sendChannel, message);
+                isRead.add(userId);
+                groupMessageVo.setIsRead(0);
+                socketIOClient.sendEvent(sendChannel, groupMessageVo);
             }
         }
-        messageMapper.insert(message);
+        
+        GroupMessage groupMessage = new GroupMessage(
+                null,
+                groupMessageVo.getUserFrom(),
+                groupMessageVo.getGroupId(),
+                groupMessageVo.getSenderNickname(),
+                groupMessageVo.getSenderPhoto(),
+                new Date(),
+                groupMessageVo.getFileRawName(),
+                groupMessageVo.getMessageType(),
+                groupMessageVo.getMessage(),
+                isRead.toString()
+        );
+        groupMessageMapper.insert(groupMessage);
     }
     
     /**

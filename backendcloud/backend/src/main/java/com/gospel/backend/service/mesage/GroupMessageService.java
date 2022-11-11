@@ -7,4 +7,5 @@ public interface GroupMessageService{
     
     R getGroupMessage(GetGroupMessageVo getGroupMessageVo);
     
+    R setIsRead(GetGroupMessageVo getGroupMessageVo);
 }

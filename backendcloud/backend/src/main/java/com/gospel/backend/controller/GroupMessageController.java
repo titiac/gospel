@@ -4,10 +4,7 @@ import com.gospel.backend.common.R;
 import com.gospel.backend.pojo.vo.GetGroupMessageVo;
 import com.gospel.backend.service.mesage.GroupMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @program: backendcloud
@@ -28,6 +25,9 @@ public class GroupMessageController {
         return groupMessageService.getGroupMessage(getGroupMessageVo);
     }
     
-    
+    @PostMapping("/setIsRead")
+    R setIsRead(@RequestBody GetGroupMessageVo getGroupMessageVo){
+        return groupMessageService.setIsRead(getGroupMessageVo);
+    }
 }
 

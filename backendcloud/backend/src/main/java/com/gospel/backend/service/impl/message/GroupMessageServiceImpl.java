@@ -67,5 +67,28 @@ public class GroupMessageServiceImpl implements GroupMessageService {
         
         return R.ok().data("groupMessage", groupMessageVos);
     }
+
+    @Override
+    public R setIsRead(GetGroupMessageVo getGroupMessageVo) {
+        QueryWrapper<GroupMessage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("group_id", getGroupMessageVo.getGroupId());
+        List<GroupMessage> groupMessages = groupMessageMapper.selectList(queryWrapper);
+
+        for(GroupMessage groupMessage: groupMessages) {
+            Set<Integer> isRead = new HashSet<>();
+            String str = groupMessage.getIsRead();
+            isRead = JSONObject.parseObject(str, IsReadVo.class).getIsRead();
+            isRead.add(getGroupMessageVo.getMyselfId());
+
+            IsReadVo isReadVo = new IsReadVo();
+            isReadVo.setIsRead(isRead);
+            JSONObject json = (JSONObject) JSONObject.toJSON(isReadVo);
+            
+            groupMessage.setIsRead(json.toString());
+            groupMessageMapper.updateById(groupMessage);
+        }
+        
+        return R.ok();
+    }
 }
 

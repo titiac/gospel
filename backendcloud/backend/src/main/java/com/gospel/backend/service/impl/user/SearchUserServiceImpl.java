@@ -5,6 +5,7 @@ import com.gospel.backend.common.R;
 import com.gospel.backend.common.ResultEnum;
 import com.gospel.backend.mapper.UserMapper;
 import com.gospel.backend.pojo.User;
+import com.gospel.backend.pojo.vo.SearchTeacherVo;
 import com.gospel.backend.service.user.SearchUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,15 @@ public class SearchUserServiceImpl implements SearchUserService {
         }
 
         return R.ok().data("user_list",list);
+    }
+
+    @Override
+    public R searchTeacher(SearchTeacherVo searchTeacherVo) {
+        String college = searchTeacherVo.getCollege();
+        String major = searchTeacherVo.getMajor();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("college", college).and(i -> i.eq("major", major));
+        
+        return null;
     }
 }

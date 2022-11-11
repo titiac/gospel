@@ -97,7 +97,7 @@ public class SocketUtil {
 
 
         IsReadVo isReadVo = new IsReadVo();     /** 用于存储已读的人的id */
-        List<Integer> isRead = new ArrayList<>();
+        Set<Integer> isRead = new HashSet<>();
         
         for(GroupMember groupMember: groupMembers) {
             Integer userId = groupMember.getUserId();

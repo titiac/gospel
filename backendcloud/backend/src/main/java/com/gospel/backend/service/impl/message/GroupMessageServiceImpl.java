@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @program: backendcloud
@@ -39,7 +41,7 @@ public class GroupMessageServiceImpl implements GroupMessageService {
         List<GroupMessageVo> groupMessageVos = new ArrayList<>();
         
         for(GroupMessage groupMessage: groupMessages) {
-            List<Integer> isRead = new ArrayList<>();
+            Set<Integer> isRead = new HashSet<>();
             String str = groupMessage.getIsRead();
             isRead = JSONObject.parseObject(str, IsReadVo.class).getIsRead();
             

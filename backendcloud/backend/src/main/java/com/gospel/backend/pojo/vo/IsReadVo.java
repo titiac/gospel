@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @program: backendcloud
@@ -17,6 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class IsReadVo {
-    private List<Integer> isRead = new ArrayList<>();
+    private Set<Integer> isRead = new HashSet<>();
 }
 

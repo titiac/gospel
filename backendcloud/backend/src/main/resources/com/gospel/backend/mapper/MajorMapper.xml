@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gospel.backend.mapper.MajorMapper">
+
+    <select id="getCollege" resultType="java.lang.String">
+        select college from major group by college;
+    </select>
+    <select id="getMajor" resultType="java.lang.String">
+        select major from major where college = #{college};
+    </select>
+</mapper>

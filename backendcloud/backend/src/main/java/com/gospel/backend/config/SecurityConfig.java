@@ -39,10 +39,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/user/account/token/").permitAll()
+                .antMatchers("/swagger-ui.html#/**", "/swagger-resources/**", "/swagger-ui.html/**", "/v2/**", "/webjars/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated();
-                
+//                                .antMatchers("/**").permitAll()
 
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }

@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class User {
     @TableId(type = IdType.AUTO)
-    private Integer id;
-    private String number;
-    private String name;
-    private String password;
+    private Integer id;         
+    private String number;      // 账号
+    private String name;        // 名字
+    private String password;    // 密码
     private Integer flag;       // 用户类型 0 管理员  1 教师   2 学生
-    private String photo;
-    private String profile;
+    private String photo;       // 头像
+    private String college;     // 学院
+    private String major;       // 专业
+    private String profile;     // 简介
     private Integer status;     // 登录状态 0 离线  1 在线
 }

@@ -35,7 +35,7 @@ public class GroupMessageServiceImpl implements GroupMessageService {
     @Override
     public R getGroupMessage(GetGroupMessageVo getGroupMessageVo) {
         QueryWrapper<GroupMessage> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("group_id", getGroupMessageVo.getGroupId());
+        queryWrapper.eq("group_id", getGroupMessageVo.getGroupId()).orderByAsc("send_time");
         List<GroupMessage> groupMessages = groupMessageMapper.selectList(queryWrapper);
         
         List<GroupMessageVo> groupMessageVos = new ArrayList<>();

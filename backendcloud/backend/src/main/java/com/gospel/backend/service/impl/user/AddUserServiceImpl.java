@@ -1,8 +1,10 @@
 package com.gospel.backend.service.impl.user;
 
 
+import com.gospel.backend.common.R;
 import com.gospel.backend.mapper.UserMapper;
 import com.gospel.backend.pojo.User;
+import com.gospel.backend.pojo.vo.AdminAddUserVo;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.service.user.AddUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import static com.gospel.backend.common.ResultEnum.ILLEGAL_OPERATION;
 
 /**
  * @Author: zhw
@@ -32,9 +36,7 @@ public class AddUserServiceImpl implements AddUserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public Map<String, String> addOne(Map<String, String> data) {
-        Map<String, String> rest = new HashMap<>();
-
+    public R addOne(AdminAddUserVo adminAddUserVo) {
         UsernamePasswordAuthenticationToken authentication =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
@@ -42,27 +44,22 @@ public class AddUserServiceImpl implements AddUserService {
         User user = loginUser.getUser();
 
         if(user.getFlag() != 0){
-            rest.put("error_message", "您没有权限进行此操作!");
-            return rest;
+            return R.error().resultEnum(ILLEGAL_OPERATION);
         }
 
-        String name = data.get("name");
-
-        if(data.get("flag") == null || data.get("flag").length() == 0) {
-            rest.put("error_message", "请对新增用户添加权限!");
-            return rest;
+        String name = adminAddUserVo.getName();
+        Integer flag = adminAddUserVo.getFlag();
+        if(flag == null) {
+            return R.error().resultEnum(ILLEGAL_OPERATION);
         }
 
-        Integer flag = Integer.parseInt(data.get("flag"));
 
         if(flag != 1 && flag != 2) {
-            rest.put("error_message", "授权错误!");
-            return rest;
+            return R.error().resultEnum(ILLEGAL_OPERATION);
         }
 
         if(name == null || name.length() == 0) {
-            rest.put("error_message", "姓名不能为空!");
-            return rest;
+            return R.error().resultEnum(ILLEGAL_OPERATION);
         }
 
         String photo = "https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png";
@@ -78,12 +75,16 @@ public class AddUserServiceImpl implements AddUserService {
         }
 
         String password = passwordEncoder.encode("123456");
-
-        User newUser = new User(null, username, name, password, flag, photo, profile, 0);
+        String college = adminAddUserVo.getCollege();
+        String major = adminAddUserVo.getMajor();
+        
+        User newUser = new User(null, username, name, password, flag, photo, college, major, profile, 0);
         userMapper.insert(newUser);
-
+        
+        Map<String, String> rest = new HashMap<>();
         rest.put("username", username);
-        rest.put("error_message", "success");
-        return rest;
+        rest.put("password", "123456");
+        
+        return R.ok().data("user", rest);
     }
 }

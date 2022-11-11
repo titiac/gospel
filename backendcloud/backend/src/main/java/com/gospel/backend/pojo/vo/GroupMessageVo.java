@@ -24,6 +24,7 @@ public class GroupMessageVo {
     private Integer groupId;    //  发送到的群
     private String senderNickname;// 发送者昵称
     private String senderPhoto; // 发送者头像
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "Asia/Shanghai")
     private Date sendTime;      //  发送时间
     private String fileRawName; //  文件原名称
     private String messageType; //  消息类型： emoji/text/img/file/video

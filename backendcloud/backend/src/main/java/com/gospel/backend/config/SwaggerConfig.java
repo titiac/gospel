@@ -17,7 +17,7 @@ import java.util.List;
  * @Author: zhw
  * @Description: 接口文档
  * @DateTime: 2022/11/5 22:48
- * http://localhost:3000/swagger-ui.html
+ * http://localhost:3000/chat/swagger-ui.html
  */
 @Configuration
 @EnableSwagger2

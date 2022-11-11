@@ -11,6 +11,7 @@ import com.gospel.backend.pojo.GroupMember;
 import com.gospel.backend.pojo.GroupMessage;
 import com.gospel.backend.pojo.SingleMessage;
 import com.gospel.backend.pojo.vo.GroupMessageVo;
+import com.gospel.backend.pojo.vo.IsReadVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,8 +94,10 @@ public class SocketUtil {
         QueryWrapper<GroupMember> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("group_id", groupId).and(w -> w.eq("member_status", 1));
         List<GroupMember> groupMembers = groupMemberMapper.selectList(queryWrapper);
-        
-        List<Integer> isRead = new ArrayList<>();     /** 用于存储已读的人的id */
+
+
+        IsReadVo isReadVo = new IsReadVo();     /** 用于存储已读的人的id */
+        List<Integer> isRead = new ArrayList<>();
         
         for(GroupMember groupMember: groupMembers) {
             Integer userId = groupMember.getUserId();
@@ -106,6 +109,8 @@ public class SocketUtil {
             }
         }
         SimpleDateFormat sdf=new SimpleDateFormat("yyMMddHHmmss");
+        isReadVo.setIsRead(isRead);
+        JSONObject json = (JSONObject) JSONObject.toJSON(isReadVo);
         GroupMessage groupMessage = new GroupMessage(
                 null,
                 groupMessageVo.getUserFrom(),
@@ -116,7 +121,7 @@ public class SocketUtil {
                 groupMessageVo.getFileRawName(),
                 groupMessageVo.getMessageType(),
                 groupMessageVo.getMessage(),
-                isRead.toString()
+                json.toString()
         );
         groupMessageMapper.insert(groupMessage);
     }

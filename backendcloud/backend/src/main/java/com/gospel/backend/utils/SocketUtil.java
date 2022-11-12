@@ -52,7 +52,9 @@ public class SocketUtil {
     public void listenSingleMessage(String data) throws InterruptedException {
         SingleMessage singleMessage = JSONObject.parseObject(data, SingleMessage.class);
         Integer userTo = singleMessage.getUserTo();
+        Integer userFrom = singleMessage.getUserFrom();
         sendToOne(userTo, singleMessage, "Single_Message");
+        sendToOne(userFrom, singleMessage, "Single_Message");
     }
     
     /**

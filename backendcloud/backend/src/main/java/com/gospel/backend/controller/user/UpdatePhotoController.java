@@ -14,7 +14,7 @@ public class UpdatePhotoController {
     @Autowired
     private UpdatePhotoService updatePhotoService;
 
-    @PostMapping("/user/photo/update/")
+    @PostMapping("/user/photo/update")
     public Map<String ,String > updatePhoto(@RequestParam MultipartFile file){
         return updatePhotoService.updatePhoto(file);
     }

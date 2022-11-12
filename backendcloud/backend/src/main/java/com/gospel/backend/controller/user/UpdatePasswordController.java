@@ -13,7 +13,7 @@ public class UpdatePasswordController {
     @Autowired
     private UpdatePasswordService updatePasswordService;
 
-    @PostMapping("/user/password/update/")
+    @PostMapping("/user/password/update")
     public Map<String ,String > updatePassword(@RequestParam Map<String ,String > data){
         return updatePasswordService.updatePassword(data);
     }

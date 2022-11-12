@@ -17,7 +17,7 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    @PostMapping("/user/login/")
+    @PostMapping("/user/login")
     public R getToken(@RequestBody LoginVo loginVo){
         String username=loginVo.getAccount();
         String password=loginVo.getPassword();

@@ -27,9 +27,31 @@ public class SendRequestServiceImpl implements SendRequestService {
         }
 
         QueryWrapper<FriendRequest> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("user_from",sendRequestVo.getUserFrom()).eq("user_to",sendRequestVo.getUserTo());
+        queryWrapper.eq("user_from",sendRequestVo.getUserFrom())
+                .eq("user_to",sendRequestVo.getUserTo())
+                .eq("status",0);
         if(!friendRequestMapper.selectList(queryWrapper).isEmpty()){
             return R.error();
+        }
+
+        queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("user_from",sendRequestVo.getUserFrom())
+                .eq("user_to",sendRequestVo.getUserTo())
+                .eq("status",1);
+        if(!friendRequestMapper.selectList(queryWrapper).isEmpty()){
+            return R.error();
+        }
+
+        queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("user_from",sendRequestVo.getUserFrom())
+                .eq("user_to",sendRequestVo.getUserTo())
+                .eq("status",2);
+        if(!friendRequestMapper.selectList(queryWrapper).isEmpty()){
+            FriendRequest friendRequest=friendRequestMapper.selectOne(queryWrapper);
+            friendRequest.setStatus(0);
+            friendRequest.setSendTime(sendRequestVo.getSendTime());
+            friendRequestMapper.updateById(friendRequest);
+            return R.ok();
         }
 
         FriendRequest friendRequest=new FriendRequest(

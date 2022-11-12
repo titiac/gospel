@@ -1,4 +1,4 @@
-package com.gospel.backend.service.major;
+package com.gospel.backend.service;
 
 import com.gospel.backend.common.R;
 

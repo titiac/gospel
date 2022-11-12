@@ -4,10 +4,7 @@ import com.gospel.backend.common.R;
 import com.gospel.backend.pojo.vo.SearchTeacherVo;
 import com.gospel.backend.service.user.SearchUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SearchUserController {
@@ -20,7 +17,7 @@ public class SearchUserController {
     }
     
     @GetMapping("/user/searchTeacher")
-    public R searchTeacher(SearchTeacherVo searchTeacherVo){
-        return searchUserService.searchTeacher(searchTeacherVo);
+    public R searchTeacher(@RequestParam String college){
+        return searchUserService.searchTeacherByCollege(college);
     }
 }

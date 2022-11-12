@@ -44,22 +44,22 @@ public class AddUserServiceImpl implements AddUserService {
         User user = loginUser.getUser();
 
         if(user.getFlag() != 0){
-            return R.error().resultEnum(ILLEGAL_OPERATION);
+            return R.error();
         }
 
         String name = adminAddUserVo.getName();
         Integer flag = adminAddUserVo.getFlag();
         if(flag == null) {
-            return R.error().resultEnum(ILLEGAL_OPERATION);
+            return R.error();
         }
 
 
         if(flag != 1 && flag != 2) {
-            return R.error().resultEnum(ILLEGAL_OPERATION);
+            return R.error();
         }
 
         if(name == null || name.length() == 0) {
-            return R.error().resultEnum(ILLEGAL_OPERATION);
+            return R.error();
         }
 
         String photo = "https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png";

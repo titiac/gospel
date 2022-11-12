@@ -6,5 +6,5 @@ import com.gospel.backend.pojo.vo.SearchTeacherVo;
 public interface SearchUserService {
     public R searchUser(String keyWord);
     
-    public R searchTeacher(SearchTeacherVo searchTeacherVo);
+    public R searchTeacherByCollege(String college);
 }

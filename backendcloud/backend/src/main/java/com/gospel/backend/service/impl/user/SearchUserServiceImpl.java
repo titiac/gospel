@@ -38,12 +38,12 @@ public class SearchUserServiceImpl implements SearchUserService {
     }
 
     @Override
-    public R searchTeacher(SearchTeacherVo searchTeacherVo) {
-        String college = searchTeacherVo.getCollege();
-        String major = searchTeacherVo.getMajor();
+    public R searchTeacherByCollege(String college) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("college", college).and(i -> i.eq("major", major));
+        queryWrapper.eq("college", college).and(i -> i.eq("flag", 1));
         
-        return null;
+        List<User> teachers= userMapper.selectList(queryWrapper);
+        
+        return R.ok().data("teachers", teachers);
     }
 }

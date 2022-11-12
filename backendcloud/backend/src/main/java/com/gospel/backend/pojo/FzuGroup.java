@@ -19,12 +19,13 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Group {
+public class FzuGroup {
     @TableId(type = IdType.AUTO)
     private Integer id;
+    private String groupNumber;     // 群号
     private String groupName;       // 群名称
     private String photo;           // 群头像
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
-    private Date createTime;      // 群创建时间
-    private String profile;         // 群简介
+    private Date groupCreateTime;      // 群创建时间
+    private String groupProfile;         // 群简介
 }

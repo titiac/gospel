@@ -1,8 +1,8 @@
-package com.gospel.backend.service.impl.major;
+package com.gospel.backend.service.impl;
 
 import com.gospel.backend.common.R;
 import com.gospel.backend.mapper.MajorMapper;
-import com.gospel.backend.service.major.MajorService;
+import com.gospel.backend.service.MajorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

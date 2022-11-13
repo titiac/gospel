@@ -17,7 +17,7 @@ public class SearchUserController {
     }
     
     @GetMapping("/user/searchTeacher")
-    public R searchTeacher(@RequestParam String college){
-        return searchUserService.searchTeacherByCollege(college);
+    public R searchTeacher(@RequestParam String major){
+        return searchUserService.searchTeacherByMajor(major);
     }
 }

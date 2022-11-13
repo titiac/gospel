@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+/**
+ * @description: 发送好友请求的参数
+ * @author: lzp
+ * @created: 2022/11/13 13:14
+ */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

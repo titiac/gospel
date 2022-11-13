@@ -5,14 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @description: 搜索用户的参数
+ * @description: 发送导师请求的参数
  * @author: lzp
  * @created: 2022/11/13 13:14
  */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchUserVo {
-    private String keyWord;
-    
+public class SendTutorRequestVo {
+    private Integer tutorId;
 }

@@ -57,9 +57,9 @@ public class CourseController {
      * @Description: 管理员获取所有选课信息
      * @DateTime: 2022/11/13 15:01
      */
-    @GetMapping("/getAll")                 
+    @GetMapping("/admin/getAll")                 
     public R adminGetCourse(){
-        return courseService.getAllCourse();
+        return courseService.adminGetCourse(1);
     }
     
     /**
@@ -71,6 +71,27 @@ public class CourseController {
     public R studentGetCourse(){
         return courseService.studentGet();
     }
-        
+    
+    
+    /**
+     * @Author: zhw
+     * @Description: 管理员获取已完成的列表
+     * @DateTime: 2022/11/13 20:29
+     */
+    @GetMapping("/admin/getOpenCourse")
+    public R adminGetOpenCourse(){
+        return courseService.adminGetCourse(2);
+    }
+    
+    
+    /**
+     * @Author: zhw
+     * @Description: 管理员获取未完成的列表
+     * @DateTime: 2022/11/13 20:30
+     */
+    @GetMapping("/admin/getCloseCourse")
+    public R adminGetCloseCourse(){
+        return courseService.adminGetCourse(3);
+    }
 }
 

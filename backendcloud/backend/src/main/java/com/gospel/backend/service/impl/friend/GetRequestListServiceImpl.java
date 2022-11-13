@@ -49,13 +49,13 @@ public class GetRequestListServiceImpl implements GetRequestListService {
             queryWrapper1.eq("id",friendRequest.getUserFrom());
             User user1=userMapper.selectOne(queryWrapper1);
             JSONObject jsonObject=new JSONObject();
-            jsonObject.put("id",user1.getId().toString());
+            jsonObject.put("id",user1.getId());
             jsonObject.put("number",user1.getNumber());
             jsonObject.put("name",user1.getName());
-            jsonObject.put("flag",user1.getFlag().toString());
+            jsonObject.put("flag",user1.getFlag());
             jsonObject.put("photo",user1.getPhoto());
             jsonObject.put("profile",user1.getProfile());
-            jsonObject.put("status",friendRequest.getStatus().toString());
+            jsonObject.put("status",friendRequest.getStatus());
             jsonObject.put("send_time",friendRequest.getSendTime());
             list1.add(jsonObject);
         }

@@ -55,13 +55,13 @@ public class TutorServiceImpl implements TutorService {
             queryWrapper1.eq("id",tutorRequest.getStudentId());
             User user1=userMapper.selectOne(queryWrapper1);
             JSONObject jsonObject=new JSONObject();
-            jsonObject.put("id",user1.getId().toString());
+            jsonObject.put("id",user1.getId());
             jsonObject.put("number",user1.getNumber());
             jsonObject.put("name",user1.getName());
-            jsonObject.put("flag",user1.getFlag().toString());
+            jsonObject.put("flag",user1.getFlag());
             jsonObject.put("photo",user1.getPhoto());
             jsonObject.put("profile",user1.getProfile());
-            jsonObject.put("status",tutorRequest.getStatus().toString());
+            jsonObject.put("status",tutorRequest.getStatus());
             jsonObject.put("send_time",tutorRequest.getSendTime());
             list1.add(jsonObject);
         }

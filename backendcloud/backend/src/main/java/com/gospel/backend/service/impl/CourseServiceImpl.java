@@ -201,5 +201,11 @@ public class CourseServiceImpl implements CourseService{
         
         return R.ok().data("Group", groupCreated);
     }
+
+    @Override
+    public R getAllCourse() {
+        QueryWrapper<Course> courseQueryWrapper = new QueryWrapper<>();
+        return R.ok().data("AllCourse", courseMapper.selectList(courseQueryWrapper));
+    }
 }
 

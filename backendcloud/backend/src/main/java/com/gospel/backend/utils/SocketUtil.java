@@ -83,7 +83,8 @@ public class SocketUtil {
             TimeUnit.MILLISECONDS.sleep(200);
             singleMessage.setIsRead(1);
         }
-        singleMessageMapper.insert(singleMessage);
+        if(userId == singleMessage.getUserTo())
+            singleMessageMapper.insert(singleMessage);
     }
     
     /**

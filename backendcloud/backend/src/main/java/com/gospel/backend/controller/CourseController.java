@@ -51,5 +51,26 @@ public class CourseController {
     public R endSelect(@RequestParam String courseId) {
         return courseService.endSelect(courseId);
     }
+    
+    /**
+     * @Author: zhw
+     * @Description: 管理员获取所有选课信息
+     * @DateTime: 2022/11/13 15:01
+     */
+    @GetMapping("/getAll")                 
+    public R adminGetCourse(){
+        return courseService.getAllCourse();
+    }
+    
+    /**
+     * @Author: zhw
+     * @Description: 获取所有正在选课的信息
+     * @DateTime: 2022/11/13 15:55
+     */
+    @GetMapping("/student/getCourse")
+    public R studentGetCourse(){
+        return null;
+    }
+        
 }
 

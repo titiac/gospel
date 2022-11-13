@@ -59,6 +59,7 @@ public class GetRequestListServiceImpl implements GetRequestListService {
             jsonObject.put("send_time",friendRequest.getSendTime());
             list1.add(jsonObject);
         }
+        
         return R.ok().data("requestList",list1);
     }
 }

@@ -220,8 +220,19 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public R getAllCourse() {
+    public R adminGetCourse(Integer type) {
         QueryWrapper<Course> courseQueryWrapper = new QueryWrapper<>();
+        
+        if(type == 1) {
+            /** 获取所有数据 不作处理*/
+        } else if (type == 2) {
+            /** 获取开启的选课 */
+            courseQueryWrapper.eq("status", 1);
+        } else if (type == 3) {
+            /** 获取结束的选课 */
+            courseQueryWrapper.eq("status", 0);
+        }
+        
         List<Course> courses = courseMapper.selectList(courseQueryWrapper);
         
         List<AdminGetCourseVo> adminGetCourseVos = new ArrayList<>();
@@ -314,5 +325,6 @@ public class CourseServiceImpl implements CourseService{
         
         return R.ok().data("allCourses", studentGetCourseVos);
     }
+    
 }
 

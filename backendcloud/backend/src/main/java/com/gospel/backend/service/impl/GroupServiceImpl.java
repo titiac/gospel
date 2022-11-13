@@ -76,10 +76,12 @@ public class GroupServiceImpl implements GroupService {
             groupMessageQueryWrapper.eq("group_id", groupId).orderByDesc("send_time");
             List<GroupMessage> groupMessages = groupMessageMapper.selectList(groupMessageQueryWrapper);
 
+            GroupMessageVo groupMessageVo = null;
             
-            GroupMessage groupMessage = groupMessages.get(0);
-            GroupMessageVo groupMessageVo = GroupMessageChangeUtil.GroupMessageChangeIntoVo(groupMessage, userId1);
-            
+            if(!groupMessages.isEmpty()) {
+                GroupMessage groupMessage = groupMessages.get(0);
+                groupMessageVo = GroupMessageChangeUtil.GroupMessageChangeIntoVo(groupMessage, userId1);
+            }
             getMyGroupVo.setGroupMessageVo(groupMessageVo);
             myGroupVos.add(getMyGroupVo);
         }

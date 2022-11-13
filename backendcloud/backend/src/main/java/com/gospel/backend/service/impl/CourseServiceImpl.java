@@ -6,16 +6,20 @@ import com.gospel.backend.common.R;
 import com.gospel.backend.mapper.*;
 import com.gospel.backend.pojo.*;
 import com.gospel.backend.pojo.vo.AddCourseVo;
+import com.gospel.backend.pojo.vo.AdminGetCourseVo;
+import com.gospel.backend.pojo.vo.StudentGetCourseVo;
 import com.gospel.backend.service.CourseService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.ClassesKey;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -90,7 +94,15 @@ public class CourseServiceImpl implements CourseService{
         if(course.getStatus() == 0) {
             return R.error();
         }
-         
+
+        /** 不能重复选课 */
+        QueryWrapper<SelectCourse> selectCourseQueryWrapper1 = new QueryWrapper<>();
+        selectCourseQueryWrapper1.eq("course_id", Integer.parseInt(courseId))
+                .and(i -> i.eq("student_id", user.getId()));
+        if(!selectCourseMapper.selectList(selectCourseQueryWrapper1).isEmpty()) {
+            return R.error();
+        }
+        
         QueryWrapper<SelectCourse> selectCourseQueryWrapper = new QueryWrapper<>();
         selectCourseQueryWrapper.eq("course_id", Integer.parseInt(courseId));
         
@@ -199,13 +211,108 @@ public class CourseServiceImpl implements CourseService{
         );
         groupMemberMapper.insert(teacherMember);
         
+        /** 更新course表中的群id */
+        newCourse.setGroupId(groupCreated.getId());
+        newCourse.setId(Integer.parseInt(courseId));
+        courseMapper.updateById(newCourse);
+
         return R.ok().data("Group", groupCreated);
     }
 
     @Override
     public R getAllCourse() {
         QueryWrapper<Course> courseQueryWrapper = new QueryWrapper<>();
-        return R.ok().data("AllCourse", courseMapper.selectList(courseQueryWrapper));
+        List<Course> courses = courseMapper.selectList(courseQueryWrapper);
+        
+        List<AdminGetCourseVo> adminGetCourseVos = new ArrayList<>();
+        
+        for(Course course : courses) {
+            Integer teacherId = course.getTeacherId();
+            User teacher = userMapper.selectById(teacherId);
+
+            String groupNumber;
+            Integer groupId = course.getGroupId();
+            if(groupId != null) {
+                FzuGroup fzuGroup = fzuGroupMapper.selectById(groupId);
+                groupNumber = fzuGroup.getGroupNumber();
+            } else {
+                groupNumber = null;
+            }
+            
+
+            QueryWrapper<SelectCourse> selectCourseQueryWrapper = new QueryWrapper<>();
+            selectCourseQueryWrapper.eq("course_id", course.getId());
+            List<SelectCourse> selectCourses = selectCourseMapper.selectList(selectCourseQueryWrapper);
+            
+            AdminGetCourseVo adminGetCourseVo = new AdminGetCourseVo(
+                    course.getId(),
+                    course.getCourseName(),
+                    teacher.getName(),
+                    selectCourses.size(),
+                    course.getLimitNum(),
+                    groupNumber,
+                    course.getAddress(),
+                    course.getStatus()
+            );
+            adminGetCourseVos.add(adminGetCourseVo);
+        }
+        return R.ok().data("allCourses", adminGetCourseVos);
+    }
+
+    @Override
+    public R studentGet() {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser=(UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        
+        QueryWrapper<Course> courseQueryWrapper = new QueryWrapper<>();
+        List<Course> courses = courseMapper.selectList(courseQueryWrapper);
+        
+        List<StudentGetCourseVo> studentGetCourseVos = new ArrayList<>();
+        for(Course course : courses){
+            Integer teacherId = course.getTeacherId();
+            User teacher = userMapper.selectById(teacherId);
+
+            String groupNumber;
+            Integer groupId = course.getGroupId();
+            if(groupId != null) {
+                FzuGroup fzuGroup = fzuGroupMapper.selectById(groupId);
+                groupNumber = fzuGroup.getGroupNumber();
+            } else {
+                groupNumber = null;
+            }
+
+
+            QueryWrapper<SelectCourse> selectCourseQueryWrapper = new QueryWrapper<>();
+            selectCourseQueryWrapper.eq("course_id", course.getId());
+            List<SelectCourse> selectCourses = selectCourseMapper.selectList(selectCourseQueryWrapper);
+
+            QueryWrapper<SelectCourse> selectCourseQueryWrapper1 = new QueryWrapper<>();
+            selectCourseQueryWrapper1.eq("course_id", course.getId()).and(i -> i.eq("student_id", user.getId()));
+            Integer flag;
+            if(selectCourseMapper.selectOne(selectCourseQueryWrapper1) != null) {
+                flag = 1;
+            } else {
+                flag = 0;
+            }
+            
+            StudentGetCourseVo studentGetCourseVo = new StudentGetCourseVo(
+                    course.getId(),
+                    course.getCourseName(),
+                    teacher.getName(),
+                    selectCourses.size(),
+                    course.getLimitNum(),
+                    groupNumber,
+                    course.getAddress(),
+                    flag,
+                    course.getStatus()
+            );
+            studentGetCourseVos.add(studentGetCourseVo);
+        }
+        
+        return R.ok().data("allCourses", studentGetCourseVos);
     }
 }
 

@@ -64,12 +64,12 @@ public class CourseController {
     
     /**
      * @Author: zhw
-     * @Description: 获取所有正在选课的信息
+     * @Description: 学生获取所有正在选课的信息
      * @DateTime: 2022/11/13 15:55
      */
     @GetMapping("/student/getCourse")
     public R studentGetCourse(){
-        return null;
+        return courseService.studentGet();
     }
         
 }

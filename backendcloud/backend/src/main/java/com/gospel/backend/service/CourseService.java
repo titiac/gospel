@@ -11,4 +11,6 @@ public interface CourseService {
     R endSelect(String courseId);
 
     R getAllCourse();
+
+    R studentGet();
 }

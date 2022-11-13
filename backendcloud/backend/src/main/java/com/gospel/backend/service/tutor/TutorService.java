@@ -12,4 +12,6 @@ public interface TutorService {
 
     public R updateTutorRequest(UpdateRequestVo updateRequestVo);
 
+    public R getRequestListForStudent();
+
 }

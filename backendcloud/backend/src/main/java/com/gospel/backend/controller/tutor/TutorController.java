@@ -36,4 +36,9 @@ public class TutorController {
         return tutorService.updateTutorRequest(updateRequestVo);
     }
 
+    @GetMapping("/tutor/getRequestListForStudent")
+    public R getRequestListForStudent(){
+        return tutorService.getRequestListForStudent();
+    }
+
 }

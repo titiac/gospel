@@ -185,4 +185,36 @@ public class TutorServiceImpl implements TutorService {
 
         return R.ok().data("student_list",userList);
     }
+
+    @Override
+    public R getRequestListForStudent() {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl loginUser=(UserDetailsImpl) authentication.getPrincipal();
+        User user=loginUser.getUser();
+
+        QueryWrapper<TutorRequest> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("student_id",user.getId());
+        List<TutorRequest> list=tutorRequestMapper.selectList(queryWrapper);
+        List<JSONObject> list1=new ArrayList<>();
+        for(TutorRequest tutorRequest:list){
+            QueryWrapper<User> queryWrapper1=new QueryWrapper<>();
+            queryWrapper1.eq("id",tutorRequest.getTutorId());
+            User user1=userMapper.selectOne(queryWrapper1);
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("id",user1.getId());
+            jsonObject.put("number",user1.getNumber());
+            jsonObject.put("name",user1.getName());
+            jsonObject.put("flag",user1.getFlag());
+            jsonObject.put("photo",user1.getPhoto());
+            jsonObject.put("profile",user1.getProfile());
+            jsonObject.put("status",tutorRequest.getStatus());
+            jsonObject.put("send_time",tutorRequest.getSendTime());
+            list1.add(jsonObject);
+        }
+        return R.ok().data("requestList",list1);
+
+        return null;
+    }
+
 }

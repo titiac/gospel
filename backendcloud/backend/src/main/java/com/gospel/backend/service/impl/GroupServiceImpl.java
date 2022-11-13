@@ -5,12 +5,15 @@ import com.gospel.backend.common.R;
 import com.gospel.backend.mapper.FzuGroupMapper;
 import com.gospel.backend.mapper.GroupMemberMapper;
 import com.gospel.backend.mapper.GroupMessageMapper;
+import com.gospel.backend.mapper.UserMapper;
 import com.gospel.backend.pojo.FzuGroup;
 import com.gospel.backend.pojo.GroupMember;
 import com.gospel.backend.pojo.GroupMessage;
 import com.gospel.backend.pojo.User;
+import com.gospel.backend.pojo.vo.GetAllMembersVo;
 import com.gospel.backend.pojo.vo.GetMyGroupVo;
 import com.gospel.backend.pojo.vo.GroupMessageVo;
+import com.gospel.backend.pojo.vo.ReturnGroupMembersVo;
 import com.gospel.backend.service.GroupService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.utils.GroupMessageChangeUtil;
@@ -39,6 +42,9 @@ public class GroupServiceImpl implements GroupService {
     
     @Autowired
     private FzuGroupMapper fzuGroupMapper;
+    
+    @Autowired
+    private UserMapper userMapper;
     
     @Override
     public R getGroupAndMessage() {
@@ -87,6 +93,43 @@ public class GroupServiceImpl implements GroupService {
         }
         
         return R.ok().data("myGroup", myGroupVos);
+    }
+
+    @Override
+    public R getAllMembers(GetAllMembersVo getAllMembersVo) {
+        Integer groupId = getAllMembersVo.getGroupId();
+        if(groupId == null) {
+            return R.error();
+        }
+        List<ReturnGroupMembersVo> returnGroupMembersVos = new ArrayList<>();
+
+        QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
+        wrapper.eq("group_id", groupId)
+                .and(i -> i.eq("member_status", 1));
+        
+        List<GroupMember> groupMembers = groupMemberMapper.selectList(wrapper);
+        for(GroupMember groupMember: groupMembers) {
+            Integer userId = groupMember.getUserId();
+            User user = userMapper.selectById(userId);
+            ReturnGroupMembersVo returnGroupMembersVo = new ReturnGroupMembersVo(
+                user.getId(),
+                user.getNumber(),
+                user.getName(),
+                user.getPassword(),
+                user.getFlag(),
+                user.getPhoto(),
+                user.getCollege(),
+                user.getMajor(),
+                user.getProfile(),
+                groupMember.getMemberType(),
+                user.getStatus()    
+            );
+            
+            returnGroupMembersVos.add(returnGroupMembersVo);
+        }
+        
+        
+        return R.ok().data("AllMembers", returnGroupMembersVos);
     }
 }
 

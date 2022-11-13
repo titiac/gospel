@@ -213,8 +213,7 @@ public class TutorServiceImpl implements TutorService {
             list1.add(jsonObject);
         }
         return R.ok().data("requestList",list1);
-
-        return null;
+        
     }
 
 }

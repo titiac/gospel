@@ -55,7 +55,7 @@ public class CourseServiceImpl implements CourseService{
     @Override
     public R adminAddCourse(AddCourseVo addCourseVo) {
         String courseName = addCourseVo.getCourseName();
-        Integer teacherName = addCourseVo.getTeacherName();
+        String teacherName = addCourseVo.getTeacherName();
         Integer limitNum = addCourseVo.getLimitNum();
         String address = addCourseVo.getAddress();
         

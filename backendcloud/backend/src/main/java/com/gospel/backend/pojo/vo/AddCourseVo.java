@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class AddCourseVo {
     private String courseName;      // 课程名
-    private Integer teacherName;      // 教师姓名
+    private String teacherName;      // 教师姓名
     private Integer limitNum;       // 课程限选人数
     private String address;         // 上课地址
 }

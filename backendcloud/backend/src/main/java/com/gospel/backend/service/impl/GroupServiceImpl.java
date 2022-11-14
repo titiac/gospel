@@ -3,14 +3,8 @@ package com.gospel.backend.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gospel.backend.common.R;
 import com.gospel.backend.common.ResultEnum;
-import com.gospel.backend.mapper.FzuGroupMapper;
-import com.gospel.backend.mapper.GroupMemberMapper;
-import com.gospel.backend.mapper.GroupMessageMapper;
-import com.gospel.backend.mapper.UserMapper;
-import com.gospel.backend.pojo.FzuGroup;
-import com.gospel.backend.pojo.GroupMember;
-import com.gospel.backend.pojo.GroupMessage;
-import com.gospel.backend.pojo.User;
+import com.gospel.backend.mapper.*;
+import com.gospel.backend.pojo.*;
 import com.gospel.backend.pojo.vo.*;
 import com.gospel.backend.service.GroupService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
@@ -20,9 +14,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javax.xml.bind.annotation.XmlList;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @program: backendcloud
@@ -44,6 +38,9 @@ public class GroupServiceImpl implements GroupService {
     
     @Autowired
     private UserMapper userMapper;
+    
+    @Autowired
+    private GroupEnterRequestMapper groupEnterRequestMapper;
     
     @Override
     public R getGroupAndMessage() {
@@ -131,8 +128,16 @@ public class GroupServiceImpl implements GroupService {
         return R.ok().data("AllMembers", returnGroupMembersVos);
     }
 
+    
     @Override
     public R getGroupByNameOrNumber(SearchGroupVo searchGroupVo) {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer userId = user.getId();
+        
         String keyword = searchGroupVo.getNameOrNumber();
 
         if(keyword == null || keyword.length() == 0) {
@@ -161,12 +166,136 @@ public class GroupServiceImpl implements GroupService {
                     adminList.add(admin);
                 }
             }
-            searchGroupReturnVos.add(new SearchGroupReturnVo(fzuGroup, adminList, groupMemberNum)); 
+
+            QueryWrapper<GroupMember> queryWrapper2 = new QueryWrapper<>();
+            queryWrapper2.eq("group_id", groupId)
+                    .and(i -> i.eq("user_id", userId))
+                    .and(i -> i.eq("member_status", 1));
+            GroupMember groupMember = groupMemberMapper.selectOne(queryWrapper2);
+            String existMe;
+            if(groupMember != null) {
+                existMe = "yes";
+            }else {
+                existMe = "no";
+            }
+             
+            searchGroupReturnVos.add(new SearchGroupReturnVo(fzuGroup, adminList, groupMemberNum, existMe)); 
         }
         if(searchGroupReturnVos.size() == 0){
             searchGroupReturnVos = null;
         }
         return R.ok().data("groups", searchGroupReturnVos);
+    }
+
+    @Override
+    public R createGroup(CreateGroupRequestVo createGroupRequestVo) {
+        Integer createUserId = createGroupRequestVo.getCreateUserId();
+        String groupName = createGroupRequestVo.getGroupName();
+        List<Integer> memberIds = createGroupRequestVo.getMemberIds();
+        if(memberIds.size() < 2) {
+            return R.error().resultEnum(ResultEnum.GROUP_MEMBERS_LACK);
+        }
+        
+        /** 先生成群号 */
+        Date createTime = new Date();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyMMddHHmmss");
+        Random r = new Random();
+        String groupNumber = "G" + sdf.format(new Date()) + r.nextInt(9);
+        String photo = "https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png";
+        String profile = "这个群主很懒什么也没留下";
+        
+        FzuGroup fzuGroup = new FzuGroup(
+                null,
+                groupNumber,
+                groupName,
+                photo,
+                createTime,
+                profile
+        );
+        fzuGroupMapper.insert(new FzuGroup(null, groupNumber, groupName, photo, createTime, profile));
+        
+        /** 拿到群id */
+        QueryWrapper<FzuGroup> groupQueryWrapper = new QueryWrapper<>();
+        groupQueryWrapper.eq("group_number", groupNumber);
+        FzuGroup groupCreated = fzuGroupMapper.selectOne(groupQueryWrapper);
+        
+        /** 添加普通用户 */
+        for(Integer i: memberIds) {
+            GroupMember groupMember = new GroupMember(
+                    null,
+                    groupCreated.getId(),
+                    i,
+                    "common",
+                    1
+            );
+            groupMemberMapper.insert(groupMember);
+        }
+        
+        /** 添加管理员（群主） */
+        GroupMember admin = new GroupMember(
+                null,
+                groupCreated.getId(),
+                createUserId,
+                "admin",
+                1
+        );
+        groupMemberMapper.insert(admin);
+
+        return R.ok().data("Group", groupCreated);
+    }
+
+    @Override
+    public R requestEnter(GroupIdVo groupIdVo) {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer userId = user.getId();
+        
+        Integer groupId = groupIdVo.getGroupId();
+        if(groupId == null) {
+           return R.error().resultEnum(ResultEnum.GROUP_ID_ERROR); 
+        }
+        
+        if(fzuGroupMapper.selectById(groupId) != null) {
+            return R.error().resultEnum(ResultEnum.GROUP_NOT_FOUND);
+        }
+        
+        QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
+        wrapper.eq("group_id", groupId)
+                .and(i -> i.eq("user_id", userId))
+                .and(i -> i.eq("member_status", 1));
+        GroupMember groupMember = groupMemberMapper.selectOne(wrapper);
+        if(groupMember != null) {
+            return R.error().resultEnum(ResultEnum.GROUP_MEMBER_EXIST);
+        }
+        
+        /** 之前的请求未被处理 */
+        QueryWrapper<GroupEnterRequest> wrapper1 = new QueryWrapper<>();
+        wrapper1.eq("group_id", groupId)
+                .and(i -> i.eq("user_from", userId))
+                .and(i -> i.eq("status", 0));
+        GroupEnterRequest find = groupEnterRequestMapper.selectOne(wrapper1);
+        
+        if(find != null) {
+            return R.error().resultEnum(ResultEnum.GROUP_ENTER_REQUEST_EXIST);
+        }
+        
+        /** 如果不在该群或之前的请求已被拒绝，可以发送请求 */
+        GroupEnterRequest groupEnterRequest = new GroupEnterRequest(
+            null,
+            userId,
+            groupId,
+            0,
+            new Date(),
+            null,
+            null    
+        );
+        
+        groupEnterRequestMapper.insert(groupEnterRequest);
+
+        return R.ok();
     }
 }
 

@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost_3306
+ Source Server         : MySQL80
  Source Server Type    : MySQL
- Source Server Version : 80030
+ Source Server Version : 80030 (8.0.30)
  Source Host           : localhost:3306
  Source Schema         : gospel
 
  Target Server Type    : MySQL
- Target Server Version : 80030
+ Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 13/11/2022 16:11:05
+ Date: 14/11/2022 16:34:56
 */
 
 SET NAMES utf8mb4;
@@ -98,13 +98,14 @@ CREATE TABLE `fzu_group`  (
   `group_profile` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '简介',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of fzu_group
 -- ----------------------------
 INSERT INTO `fzu_group` VALUES (1, 'G2211031923482', 'kkk', 'https://w.wallhaven.cc/full/7p/wallhaven-7p6jp3.png', '2022-11-06 12:06:05', '这个群主很懒什么也没留下');
 INSERT INTO `fzu_group` VALUES (2, 'G2211121923482', '操作系统 东三 钱牧', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-12 19:23:48', '这个是钱牧老师的操作系统教学群');
+INSERT INTO `fzu_group` VALUES (3, 'G2211141531474', '测试普通用户建群', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-14 15:31:47', '这个群主很懒什么也没留下');
 
 -- ----------------------------
 -- Table structure for group
@@ -125,6 +126,27 @@ CREATE TABLE `group`  (
 INSERT INTO `group` VALUES (1, 'kkk', 'https://w.wallhaven.cc/full/7p/wallhaven-7p6jp3.png', '2022-11-06 12:06:05', '这个群主很懒什么也没留下');
 
 -- ----------------------------
+-- Table structure for group_enter_request
+-- ----------------------------
+DROP TABLE IF EXISTS `group_enter_request`;
+CREATE TABLE `group_enter_request`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_from` int NULL DEFAULT NULL,
+  `group_id` int NULL DEFAULT NULL,
+  `status` int NULL DEFAULT 0,
+  `send_time` datetime NULL DEFAULT NULL,
+  `deal_time` datetime NULL DEFAULT NULL,
+  `deal_admin_id` int NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `id`(`id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '发送加群请求表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of group_enter_request
+-- ----------------------------
+INSERT INTO `group_enter_request` VALUES (1, 18, 13, 0, '2022-11-14 16:23:05', NULL, NULL);
+
+-- ----------------------------
 -- Table structure for group_member
 -- ----------------------------
 DROP TABLE IF EXISTS `group_member`;
@@ -135,7 +157,7 @@ CREATE TABLE `group_member`  (
   `member_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `member_status` int NULL DEFAULT 1 COMMENT '是否被移除群聊',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群成员表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群成员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of group_member
@@ -149,6 +171,10 @@ INSERT INTO `group_member` VALUES (6, 2, 16, 'common', 1);
 INSERT INTO `group_member` VALUES (7, 2, 17, 'common', 1);
 INSERT INTO `group_member` VALUES (8, 2, 18, 'common', 1);
 INSERT INTO `group_member` VALUES (9, 2, 12, 'admin', 1);
+INSERT INTO `group_member` VALUES (10, 3, 14, 'common', 1);
+INSERT INTO `group_member` VALUES (11, 3, 15, 'common', 1);
+INSERT INTO `group_member` VALUES (12, 3, 16, 'common', 1);
+INSERT INTO `group_member` VALUES (13, 3, 11, 'admin', 1);
 
 -- ----------------------------
 -- Table structure for group_message
@@ -269,7 +295,7 @@ CREATE TABLE `tutor`  (
   `create_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tutor
@@ -289,7 +315,7 @@ CREATE TABLE `tutor_request`  (
   `send_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tutor_request

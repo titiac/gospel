@@ -21,5 +21,6 @@ public class SearchGroupReturnVo {
     private FzuGroup fzuGroup;
     private List<User> adminList;
     private Integer membersNum;
+    private String existMe;      // yes 表示在该群  no 表示不在该群
 }
 

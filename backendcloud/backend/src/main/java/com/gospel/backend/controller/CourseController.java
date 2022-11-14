@@ -58,7 +58,7 @@ public class CourseController {
      * @Description: 管理员获取所有选课信息
      * @DateTime: 2022/11/13 15:01
      */
-    @GetMapping("/admin/getAll")                 
+    @PostMapping("/admin/getAll")
     public R adminGetCourse(@RequestBody Integer type){
         return courseService.adminGetCourse(type);
     }

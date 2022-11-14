@@ -25,14 +25,15 @@ public enum ResultEnum {
     ERROR_SETTING_GENDER(1012, "设置性别错误，必须为纯数字"),
     ERROR_SETTING_AGE(1012, "设置年龄错误，必须为纯数字"),
     ERROR_SETTING_EMAIL(1012, "设置邮箱错误"),
-    ILLEGAL_OPERATION(4001, "非法操作"),
+    ILLEGAL_OPERATION(400, "非法操作"),
     USER_NOT_FOUND(1145,"没有找到该用户"),
     GROUP_FOUND_ERROR(400, "参数错误"),
     GROUP_NOT_FOUND(400, "没有找到相关群"),
     GROUP_MEMBERS_LACK(400, "群成员过少"),
     GROUP_ID_ERROR(400, "群id不可用"),
     GROUP_MEMBER_EXIST(400, "您已加入该群"),
-    GROUP_ENTER_REQUEST_EXIST(400, "您之前的加群请求还未被处理，请耐心等待")
+    GROUP_ENTER_REQUEST_EXIST(400, "您之前的加群请求还未被处理，请耐心等待"),
+    GROUP_IS_DROP(400, "群聊已经被解散")
     ;
 
 

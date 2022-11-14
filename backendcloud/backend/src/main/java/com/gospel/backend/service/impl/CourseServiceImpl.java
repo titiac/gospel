@@ -174,10 +174,12 @@ public class CourseServiceImpl implements CourseService{
                 groupName,
                 photo,
                 createTime,
-                profile
+                profile,
+                1,
+                null
         );
         System.out.println(newGroup);
-        fzuGroupMapper.insert(new FzuGroup(null, groupNumber, groupName, photo, createTime, profile));
+        fzuGroupMapper.insert(newGroup);
         
         /** 取出创建的群 */
         QueryWrapper<FzuGroup> groupQueryWrapper = new QueryWrapper<>();

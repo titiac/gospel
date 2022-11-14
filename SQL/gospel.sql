@@ -11,7 +11,7 @@
  Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 14/11/2022 16:34:56
+ Date: 14/11/2022 19:53:30
 */
 
 SET NAMES utf8mb4;
@@ -96,16 +96,19 @@ CREATE TABLE `fzu_group`  (
   `photo` varchar(1500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `group_create_time` datetime NULL DEFAULT NULL,
   `group_profile` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '简介',
+  `status` int NULL DEFAULT 1,
+  `drop_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of fzu_group
 -- ----------------------------
-INSERT INTO `fzu_group` VALUES (1, 'G2211031923482', 'kkk', 'https://w.wallhaven.cc/full/7p/wallhaven-7p6jp3.png', '2022-11-06 12:06:05', '这个群主很懒什么也没留下');
-INSERT INTO `fzu_group` VALUES (2, 'G2211121923482', '操作系统 东三 钱牧', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-12 19:23:48', '这个是钱牧老师的操作系统教学群');
-INSERT INTO `fzu_group` VALUES (3, 'G2211141531474', '测试普通用户建群', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-14 15:31:47', '这个群主很懒什么也没留下');
+INSERT INTO `fzu_group` VALUES (1, 'G2211031923482', 'kkk', 'https://w.wallhaven.cc/full/7p/wallhaven-7p6jp3.png', '2022-11-06 12:06:05', '这个群主很懒什么也没留下', 1, NULL);
+INSERT INTO `fzu_group` VALUES (2, 'G2211121923482', '操作系统 东三 钱牧', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-12 19:23:48', '这个是钱牧老师的操作系统教学群', 1, NULL);
+INSERT INTO `fzu_group` VALUES (3, 'G2211141531474', '测试普通用户建群', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-14 15:31:47', '这个群主很懒什么也没留下', 1, NULL);
+INSERT INTO `fzu_group` VALUES (4, 'G2211141800407', '添加删除群聊字段测试', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-14 18:00:41', '这个群主很懒什么也没留下', 1, NULL);
 
 -- ----------------------------
 -- Table structure for group
@@ -117,13 +120,14 @@ CREATE TABLE `group`  (
   `photo` varchar(1500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `create_time` datetime NULL DEFAULT NULL,
   `profile` varchar(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '简介',
+  `status` int NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of group
 -- ----------------------------
-INSERT INTO `group` VALUES (1, 'kkk', 'https://w.wallhaven.cc/full/7p/wallhaven-7p6jp3.png', '2022-11-06 12:06:05', '这个群主很懒什么也没留下');
+INSERT INTO `group` VALUES (1, 'kkk', 'https://w.wallhaven.cc/full/7p/wallhaven-7p6jp3.png', '2022-11-06 12:06:05', '这个群主很懒什么也没留下', NULL);
 
 -- ----------------------------
 -- Table structure for group_enter_request
@@ -144,7 +148,7 @@ CREATE TABLE `group_enter_request`  (
 -- ----------------------------
 -- Records of group_enter_request
 -- ----------------------------
-INSERT INTO `group_enter_request` VALUES (1, 18, 13, 0, '2022-11-14 16:23:05', NULL, NULL);
+INSERT INTO `group_enter_request` VALUES (1, 18, 3, 0, '2022-11-14 16:23:05', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for group_member
@@ -157,7 +161,7 @@ CREATE TABLE `group_member`  (
   `member_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `member_status` int NULL DEFAULT 1 COMMENT '是否被移除群聊',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群成员表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群成员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of group_member
@@ -175,6 +179,11 @@ INSERT INTO `group_member` VALUES (10, 3, 14, 'common', 1);
 INSERT INTO `group_member` VALUES (11, 3, 15, 'common', 1);
 INSERT INTO `group_member` VALUES (12, 3, 16, 'common', 1);
 INSERT INTO `group_member` VALUES (13, 3, 11, 'admin', 1);
+INSERT INTO `group_member` VALUES (14, 4, 12, 'common', 1);
+INSERT INTO `group_member` VALUES (15, 4, 13, 'common', 1);
+INSERT INTO `group_member` VALUES (16, 4, 14, 'common', 1);
+INSERT INTO `group_member` VALUES (17, 4, 15, 'common', 1);
+INSERT INTO `group_member` VALUES (18, 4, 16, 'admin', 1);
 
 -- ----------------------------
 -- Table structure for group_message

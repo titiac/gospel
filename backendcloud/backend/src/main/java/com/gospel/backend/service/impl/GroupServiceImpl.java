@@ -9,6 +9,9 @@ import com.gospel.backend.pojo.vo.*;
 import com.gospel.backend.service.GroupService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.utils.GroupMessageChangeUtil;
+import org.apache.ibatis.javassist.compiler.ast.Variable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +29,8 @@ import java.util.*;
  */
 @Service
 public class GroupServiceImpl implements GroupService {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
     private GroupMessageMapper groupMessageMapper;
@@ -69,8 +74,10 @@ public class GroupServiceImpl implements GroupService {
         for(Integer groupId : groupIds){
             /** 存储结果的对象 */
             GetMyGroupVo getMyGroupVo = new GetMyGroupVo();
-            
-            FzuGroup fzuGroup = fzuGroupMapper.selectById(groupId);
+            QueryWrapper<FzuGroup> wrapper = new QueryWrapper<>();
+            wrapper.eq("id", groupId)
+                    .and(i -> i.eq("status", 1));
+            FzuGroup fzuGroup = fzuGroupMapper.selectOne(wrapper);
             getMyGroupVo.setFzuGroup(fzuGroup);
 
             /** 获取消息，此处获取的消息的已读是用set存的 */
@@ -85,7 +92,8 @@ public class GroupServiceImpl implements GroupService {
                 groupMessageVo = GroupMessageChangeUtil.GroupMessageChangeIntoVo(groupMessage, userId1);
             }
             getMyGroupVo.setGroupMessageVo(groupMessageVo);
-            myGroupVos.add(getMyGroupVo);
+            if(getMyGroupVo.getFzuGroup() != null)
+                myGroupVos.add(getMyGroupVo);
         }
         
         return R.ok().data("myGroup", myGroupVos);
@@ -95,8 +103,13 @@ public class GroupServiceImpl implements GroupService {
     public R getAllMembers(GetAllMembersVo getAllMembersVo) {
         Integer groupId = getAllMembersVo.getGroupId();
         if(groupId == null) {
-            return R.error();
+            return R.error().resultEnum(ResultEnum.GROUP_ID_ERROR);
         }
+        
+        if(fzuGroupMapper.selectById(groupId).getStatus() == 0) {
+            return R.error().resultEnum(ResultEnum.GROUP_IS_DROP);
+        }
+        
         List<ReturnGroupMembersVo> returnGroupMembersVos = new ArrayList<>();
 
         QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
@@ -118,7 +131,7 @@ public class GroupServiceImpl implements GroupService {
                 user.getMajor(),
                 user.getProfile(),
                 groupMember.getMemberType(),
-                user.getStatus()    
+                groupMember.getMemberStatus()
             );
             
             returnGroupMembersVos.add(returnGroupMembersVo);
@@ -145,7 +158,8 @@ public class GroupServiceImpl implements GroupService {
         }
         
         QueryWrapper<FzuGroup> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("group_number", keyword).or().like("group_name", keyword);
+        queryWrapper.eq("status", 1)
+                .and(i -> i.eq("group_number", keyword).or().like("group_name", keyword));        
         
         List<FzuGroup> groups = fzuGroupMapper.selectList(queryWrapper); 
         List<SearchGroupReturnVo> searchGroupReturnVos = new ArrayList<>();
@@ -210,9 +224,11 @@ public class GroupServiceImpl implements GroupService {
                 groupName,
                 photo,
                 createTime,
-                profile
+                profile,
+                1,
+                null
         );
-        fzuGroupMapper.insert(new FzuGroup(null, groupNumber, groupName, photo, createTime, profile));
+        fzuGroupMapper.insert(fzuGroup);
         
         /** 拿到群id */
         QueryWrapper<FzuGroup> groupQueryWrapper = new QueryWrapper<>();
@@ -258,7 +274,7 @@ public class GroupServiceImpl implements GroupService {
            return R.error().resultEnum(ResultEnum.GROUP_ID_ERROR); 
         }
         
-        if(fzuGroupMapper.selectById(groupId) != null) {
+        if(fzuGroupMapper.selectById(groupId) == null) {
             return R.error().resultEnum(ResultEnum.GROUP_NOT_FOUND);
         }
         
@@ -295,6 +311,176 @@ public class GroupServiceImpl implements GroupService {
         
         groupEnterRequestMapper.insert(groupEnterRequest);
 
+        return R.ok();
+    }
+
+    @Override
+    public R getMyRequest() {
+        List<GetMyRequestReturnVo> getMyRequestReturnVos = new ArrayList<>();
+        
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer myselfId = user.getId();
+        
+        // 获取请求列表
+        QueryWrapper<GroupEnterRequest> wrapper1 = new QueryWrapper<>();
+        wrapper1.eq("user_from", myselfId)
+                .orderByDesc("send_time");
+        List<GroupEnterRequest> groupEnterRequests = groupEnterRequestMapper.selectList(wrapper1);
+        
+        for(GroupEnterRequest groupEnterRequest : groupEnterRequests) {
+            // 获取群信息
+            Integer groupId = groupEnterRequest.getGroupId();
+            /** 有个问题，如果请求在，然后群被解散了, 信息全部返回 */
+            FzuGroup fzuGroup = fzuGroupMapper.selectById(groupId);
+            
+            // 获取群中管理员的信息
+            QueryWrapper<GroupMember> wrapper2 = new QueryWrapper<>();
+            wrapper2.eq("group_id", groupId)
+                    .and(i -> i.eq("member_type", "admin"))
+                    .and(i -> i.eq("member_status", 1));
+            List<GroupMember> groupMembers = groupMemberMapper.selectList(wrapper2);
+            
+            List<User> admins = new ArrayList<>();
+            for(GroupMember groupMember : groupMembers) {
+                admins.add(userMapper.selectById(groupMember.getUserId()));
+            }
+            User dealMan = null;
+            if(groupEnterRequest.getDealAdminId() != null){
+                dealMan = userMapper.selectById(groupEnterRequest.getDealAdminId());
+            }
+            getMyRequestReturnVos.add(new GetMyRequestReturnVo(groupEnterRequest, fzuGroup, admins, dealMan));
+        }
+
+        return R.ok().data("myRequestList", getMyRequestReturnVos);
+    }
+
+    @Override
+    public R inviteMembers(InviteOrDeleteMembersVo inviteOrDeleteMembersVo) {
+        List<GetMyRequestReturnVo> getMyRequestReturnVos = new ArrayList<>();
+
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer myselfId = user.getId();
+                
+        Integer groupId = inviteOrDeleteMembersVo.getGroupId();
+        if(groupId == null) {
+            return R.error().resultEnum(ResultEnum.GROUP_FOUND_ERROR);
+        }
+        
+        /** 如果这个用户在群里 */
+        QueryWrapper<GroupMember> wrapper1 = new QueryWrapper<>();
+        wrapper1.eq("group_id", groupId)
+                .and(i -> i.eq("user_id", myselfId))
+                .and(i -> i.eq("member_status", 1));
+        
+        GroupMember inviter = groupMemberMapper.selectOne(wrapper1);
+        if(inviter == null) {
+            return R.error().resultEnum(ResultEnum.ILLEGAL_OPERATION);
+        }
+        
+        /** 如果是管理员邀请 */
+        List<Integer> list = inviteOrDeleteMembersVo.getMembersId();
+        if(Objects.equals(inviter.getMemberType(), "admin")) {
+            for (Integer newMemberId : list) {
+                /** 需要将之前发送的加群请求全部更新 */
+                QueryWrapper<GroupEnterRequest> wrapper5 = new QueryWrapper<>();
+                wrapper5.eq("group_id", groupId)
+                        .and(i -> i.eq("user_from", newMemberId))
+                        .and(i -> i.eq("status", 0));
+
+                GroupEnterRequest oldEnterRequest = groupEnterRequestMapper.selectOne(wrapper5);
+                if(oldEnterRequest != null) {
+                    oldEnterRequest.setDealAdminId(myselfId);
+                    oldEnterRequest.setStatus(1);
+                    oldEnterRequest.setDealTime(new Date());
+                    groupEnterRequestMapper.updateById(oldEnterRequest);   
+                }
+                
+                // 查询之前在不在群里该用户
+                QueryWrapper<GroupMember> wrapper2 = new QueryWrapper<>();
+                wrapper2.eq("group_id", groupId)
+                        .and(i -> i.eq("user_id", newMemberId));
+                GroupMember oldMember = groupMemberMapper.selectOne(wrapper2);
+                if(oldMember != null) {
+                    if(oldMember.getMemberStatus() == 0) {
+                        oldMember.setMemberType("common");
+                        oldMember.setMemberStatus(1);
+                        groupMemberMapper.updateById(oldMember);
+                        log.info("管理员直接将用户{}拉入群聊P{}", newMemberId, groupId);
+                    } else {
+                        log.info("用户{}已经在群{}中，不做处理", newMemberId, groupId);
+                    }
+                } else {
+                    GroupMember newMember = new GroupMember(
+                        null,
+                        groupId,
+                        newMemberId,
+                        "common",
+                        1    
+                    );
+                    groupMemberMapper.insert(newMember);
+                }
+            }
+        } else {
+            /** 如果是普通群员邀请 */
+            for (Integer newMemberId : list) {
+                // 查询之前在不在这个群
+                QueryWrapper<GroupMember> wrapper3 = new QueryWrapper<>();
+                wrapper3.eq("group_id", groupId)
+                        .and(i -> i.eq("user_id", newMemberId));
+                GroupMember oldMember = groupMemberMapper.selectOne(wrapper3);
+                
+                if(oldMember != null) {
+                    /** 之前在这个群 */
+                    if(oldMember.getMemberStatus() == 0) {
+                        /** 被踢出 */
+                        GroupEnterRequest newRequest = new GroupEnterRequest(
+                                null,
+                                newMemberId,
+                                groupId,
+                                0,
+                                new Date(),
+                                null,
+                                null
+                        );
+                        groupEnterRequestMapper.insert(newRequest);
+                    } else {
+                        log.info("用户{}已经在群{}中，不做处理", newMemberId, groupId);
+                    }
+                } else {
+                    /** 查询之前有无加群请求 */
+                    QueryWrapper<GroupEnterRequest> wrapper4 = new QueryWrapper<>();
+                    wrapper4.eq("group_id", groupId)
+                            .and(i -> i.eq("user_from", newMemberId))
+                            .and(i -> i.eq("status", 0));
+                    
+                    GroupEnterRequest oldEnterRequest = groupEnterRequestMapper.selectOne(wrapper4);
+                    if(oldEnterRequest != null){
+                        /** 存在加群请求还未被处理 */
+                        log.info("用户{}已经已经请求加入{}，不做处理", newMemberId, groupId);
+                    } else {
+                        GroupEnterRequest newRequest = new GroupEnterRequest(
+                                null,
+                                newMemberId,
+                                groupId,
+                                0,
+                                new Date(),
+                                null,
+                                null
+                        );
+                        groupEnterRequestMapper.insert(newRequest);
+                    }
+                    
+                }
+            }
+        }
         return R.ok();
     }
 }

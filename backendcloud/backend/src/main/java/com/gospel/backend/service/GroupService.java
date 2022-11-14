@@ -1,10 +1,7 @@
 package com.gospel.backend.service;
 
 import com.gospel.backend.common.R;
-import com.gospel.backend.pojo.vo.CreateGroupRequestVo;
-import com.gospel.backend.pojo.vo.GetAllMembersVo;
-import com.gospel.backend.pojo.vo.GroupIdVo;
-import com.gospel.backend.pojo.vo.SearchGroupVo;
+import com.gospel.backend.pojo.vo.*;
 
 public interface GroupService {
     R getGroupAndMessage();
@@ -16,4 +13,8 @@ public interface GroupService {
     R createGroup(CreateGroupRequestVo createGroupRequestVo);
 
     R requestEnter(GroupIdVo groupIdVo);
+
+    R getMyRequest();
+
+    R inviteMembers(InviteOrDeleteMembersVo inviteOrDeleteMembersVo);
 }

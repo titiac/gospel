@@ -77,10 +77,8 @@ public class GroupController {
      * @DateTime: 2022/11/14 14:30
      */
     @PostMapping("/invite")
-    public R request(@RequestBody InviteOrDeleteMembersVo inviteOrDeleteMembersVo) {
-        /** 如果是管理员邀请 */
-        /** 如果是普通用户邀请 */
-        return null;
+    public R inviteMembers(@RequestBody InviteOrDeleteMembersVo inviteOrDeleteMembersVo) {
+        return groupService.inviteMembers(inviteOrDeleteMembersVo);
     }
     
     /**
@@ -90,7 +88,7 @@ public class GroupController {
      */
     @GetMapping("/get/myRequest")
     public R getMyRequest(){
-        return null;
+        return groupService.getMyRequest();
     }
     
     /**

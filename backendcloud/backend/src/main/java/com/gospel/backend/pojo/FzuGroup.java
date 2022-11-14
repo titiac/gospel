@@ -28,4 +28,7 @@ public class FzuGroup {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date groupCreateTime;      // 群创建时间
     private String groupProfile;         // 群简介
+    private Integer status;               // 群是否解散 1 正常   0解散
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
+    private Date dropTime;              // 群聊解散时间
 }

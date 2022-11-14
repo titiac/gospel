@@ -29,6 +29,10 @@ public enum ResultEnum {
     USER_NOT_FOUND(1145,"没有找到该用户"),
     GROUP_FOUND_ERROR(400, "参数错误"),
     GROUP_NOT_FOUND(400, "没有找到相关群"),
+    GROUP_MEMBERS_LACK(400, "群成员过少"),
+    GROUP_ID_ERROR(400, "群id不可用"),
+    GROUP_MEMBER_EXIST(400, "您已加入该群"),
+    GROUP_ENTER_REQUEST_EXIST(400, "您之前的加群请求还未被处理，请耐心等待")
     ;
 
 

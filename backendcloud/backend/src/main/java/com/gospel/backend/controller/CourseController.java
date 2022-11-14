@@ -65,7 +65,7 @@ public class CourseController {
     }
     
     /**
-     * @Author: zhw
+     * @Author: zhw,lzp
      * @Description: 学生获取所有正在选课的信息
      * @DateTime: 2022/11/13 15:55
      */
@@ -98,7 +98,7 @@ public class CourseController {
 
     /**
      * @Author: lzp
-     * @Description: 管理员获取正在选课的课程的选课记录
+     * @Description: 管理员获取全部选课记录
      * @DateTime: 2022/11/14 11:10
      */
 

@@ -9,7 +9,6 @@ import com.gospel.backend.pojo.vo.*;
 import com.gospel.backend.service.GroupService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.utils.GroupMessageChangeUtil;
-import org.apache.ibatis.javassist.compiler.ast.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.annotation.XmlList;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -482,6 +480,57 @@ public class GroupServiceImpl implements GroupService {
             }
         }
         return R.ok();
+    }
+
+    @Override
+    public R getRequestList() {
+        /** 获取自己管理的群 */
+        List<GetMyRequestReturnVo> getMyRequestReturnVos = new ArrayList<>();
+
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer myselfId = user.getId();
+
+        QueryWrapper<GroupMember> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", myselfId)
+                .and(i -> i.eq("member_type", "admin"))
+                .and(i -> i.eq("member_status", 1));
+        
+        List<GroupMember> groupMembers = groupMemberMapper.selectList(queryWrapper);
+        List<AdminGetRequestListReturn> adminGetRequestListReturns = new ArrayList<>();
+        
+        for(GroupMember groupMember : groupMembers) {
+            
+            Integer groupId = groupMember.getGroupId();
+            FzuGroup fzuGroup = fzuGroupMapper.selectById(groupId);
+            
+            /** 获取对应群的请求 */
+            QueryWrapper<GroupEnterRequest> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("group_id", groupId)
+                    .orderByAsc("status")
+                    .orderByAsc("send_time");
+            
+            List<GroupEnterRequest> groupEnterRequests = groupEnterRequestMapper.selectList(queryWrapper1);
+
+            for(GroupEnterRequest groupEnterRequest : groupEnterRequests) {
+                AdminGetRequestListReturn adminGetRequestListReturn = new AdminGetRequestListReturn();
+                adminGetRequestListReturn.setFzuGroup(fzuGroup);
+                adminGetRequestListReturn.setGroupEnterRequest(groupEnterRequest);
+                User applyUser = userMapper.selectById(groupEnterRequest.getUserFrom());
+                adminGetRequestListReturn.setApplyUser(applyUser);
+                if(groupEnterRequest.getDealAdminId() != null) {
+                    adminGetRequestListReturn.setDealUser( 
+                            userMapper.selectById(groupEnterRequest.getDealAdminId())
+                    );
+                } 
+                
+                adminGetRequestListReturns.add(adminGetRequestListReturn);
+            }
+        }
+        return R.ok().data("RequestList", adminGetRequestListReturns);
     }
 }
 

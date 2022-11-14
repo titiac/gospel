@@ -83,7 +83,7 @@ public class GroupController {
     
     /**
      * @Author: zhw
-     * @Description: 获取我发送的请求
+     * @Description: 获取用户自己发送的请求
      * @DateTime: 2022/11/14 14:23
      */
     @GetMapping("/get/myRequest")
@@ -98,7 +98,7 @@ public class GroupController {
      */
     @GetMapping("/get/requestList")
     public R getRequestList(){
-        return null;
+        return groupService.getRequestList();
     }
     
     /**

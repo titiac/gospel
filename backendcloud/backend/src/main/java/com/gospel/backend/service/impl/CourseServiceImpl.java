@@ -396,6 +396,7 @@ public class CourseServiceImpl implements CourseService{
             jsonObject.put("address",course.getAddress());
             jsonObject.put("teacher_name",teacher.getName());
             jsonObjectList.add(jsonObject);
+            
         }
 
         return R.ok().data("CourseList",jsonObjectList);

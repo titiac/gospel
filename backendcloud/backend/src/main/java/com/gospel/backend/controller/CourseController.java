@@ -2,6 +2,7 @@ package com.gospel.backend.controller;
 
 import com.gospel.backend.common.R;
 import com.gospel.backend.pojo.vo.AddCourseVo;
+import com.gospel.backend.pojo.vo.CancelSelectCourseVo;
 import com.gospel.backend.pojo.vo.UpdateCourseVo;
 import com.gospel.backend.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +128,17 @@ public class CourseController {
     @GetMapping("/student/getSelfCourse")
     public R getSelfCourse(){
         return courseService.studentGetSelf();
+    }
+
+    /**
+     * @Author: lzp
+     * @Description: 学生取消选课
+     * @DateTime: 2022/11/14 11:47
+     */
+
+    @PostMapping("/student/cancelSelect")
+    public R cancelSelectCourse(@RequestBody CancelSelectCourseVo cancelSelectCourseVo){
+        return courseService.studentCancel(cancelSelectCourseVo);
     }
 
 }

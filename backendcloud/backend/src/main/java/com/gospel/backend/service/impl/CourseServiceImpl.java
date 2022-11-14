@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.gospel.backend.common.R;
 import com.gospel.backend.mapper.*;
 import com.gospel.backend.pojo.*;
-import com.gospel.backend.pojo.vo.AddCourseVo;
-import com.gospel.backend.pojo.vo.AdminGetCourseVo;
-import com.gospel.backend.pojo.vo.StudentGetCourseVo;
-import com.gospel.backend.pojo.vo.UpdateCourseVo;
+import com.gospel.backend.pojo.vo.*;
 import com.gospel.backend.service.CourseService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import org.slf4j.Logger;
@@ -400,6 +397,23 @@ public class CourseServiceImpl implements CourseService{
         }
 
         return R.ok().data("CourseList",jsonObjectList);
+    }
+
+    @Override
+    public R studentCancel(CancelSelectCourseVo cancelSelectCourseVo) {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser=(UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+
+        QueryWrapper<SelectCourse> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("course_id",cancelSelectCourseVo.getCourseId()).eq("student_id",user.getId());
+        SelectCourse selectCourse=selectCourseMapper.selectOne(queryWrapper);
+
+        selectCourseMapper.deleteById(selectCourse);
+
+        return R.ok();
     }
     
 }

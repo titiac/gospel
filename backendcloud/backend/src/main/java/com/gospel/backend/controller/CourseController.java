@@ -59,8 +59,9 @@ public class CourseController {
      * @DateTime: 2022/11/13 15:01
      */
     @PostMapping("/admin/getAll")
-    public R adminGetCourse(@RequestBody Integer type){
-        return courseService.adminGetCourse(type);
+    public R adminGetCourse(@RequestParam String type){
+        Integer newType=Integer.parseInt(type);
+        return courseService.adminGetCourse(newType);
     }
     
     /**

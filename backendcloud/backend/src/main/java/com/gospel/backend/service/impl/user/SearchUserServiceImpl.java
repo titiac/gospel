@@ -6,8 +6,11 @@ import com.gospel.backend.common.ResultEnum;
 import com.gospel.backend.mapper.UserMapper;
 import com.gospel.backend.pojo.User;
 import com.gospel.backend.pojo.vo.SearchTeacherVo;
+import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.service.user.SearchUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,9 +41,14 @@ public class SearchUserServiceImpl implements SearchUserService {
     }
 
     @Override
-    public R searchTeacherByMajor(String major) {
+    public R searchTeacherByMajor() {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl loginUser=(UserDetailsImpl) authentication.getPrincipal();
+        User user=loginUser.getUser();
+
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("major", major).and(i -> i.eq("flag", 1));
+        queryWrapper.eq("major", user.getMajor()).and(i -> i.eq("flag", 1));
         
         List<User> teachers= userMapper.selectList(queryWrapper);
         

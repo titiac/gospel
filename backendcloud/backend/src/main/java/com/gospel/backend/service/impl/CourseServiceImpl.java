@@ -55,19 +55,19 @@ public class CourseServiceImpl implements CourseService{
     @Override
     public R adminAddCourse(AddCourseVo addCourseVo) {
         String courseName = addCourseVo.getCourseName();
-        Integer teacherId = addCourseVo.getTeacherId();
+        Integer teacherName = addCourseVo.getTeacherName();
         Integer limitNum = addCourseVo.getLimitNum();
         String address = addCourseVo.getAddress();
         
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", teacherId).and(i -> i.eq("flag", 1));
+        queryWrapper.eq("name", teacherName).and(i -> i.eq("flag", 1));
         User teacher = userMapper.selectOne(queryWrapper);
         if(teacher == null) {
             return R.error();
         }
         
                 
-        Course course = new Course(null, courseName, teacherId, limitNum, null, address, 1);
+        Course course = new Course(null, courseName, teacher.getId(), limitNum, null, address, 1);
         
         courseMapper.insert(course);
         return R.ok();

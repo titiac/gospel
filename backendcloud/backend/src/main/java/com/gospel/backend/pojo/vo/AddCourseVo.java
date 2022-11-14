@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 /**
  * @program: backendcloud
  * @description: 管理员添加课程需要的数据
- * @author: zhw
+ * @author: zhw,lzp
  * @created: 2022/11/12 10:54
  */
 
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class AddCourseVo {
     private String courseName;      // 课程名
-    private Integer teacherId;      // 教师用户id
+    private Integer teacherName;      // 教师姓名
     private Integer limitNum;       // 课程限选人数
     private String address;         // 上课地址
 }

@@ -18,5 +18,7 @@ public interface CourseService {
     R adminGetRecord();
 
     R updateCourse(UpdateCourseVo updateCourseVo);
+
+    R studentGetSelf();
     
 }

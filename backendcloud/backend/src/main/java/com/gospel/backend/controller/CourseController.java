@@ -118,5 +118,16 @@ public class CourseController {
         return courseService.updateCourse(updateCourseVo);
     }
 
+    /**
+     * @Author: lzp
+     * @Description: 学生获取自己课表
+     * @DateTime: 2022/11/14 11:47
+     */
+
+    @GetMapping("/student/getSelfCourse")
+    public R getSelfCourse(){
+        return courseService.studentGetSelf();
+    }
+
 }
 

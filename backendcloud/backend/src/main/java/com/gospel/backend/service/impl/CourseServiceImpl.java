@@ -274,6 +274,7 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public R studentGet() {
+        //学生获取开课的课表
         UsernamePasswordAuthenticationToken authentication=
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
@@ -281,6 +282,7 @@ public class CourseServiceImpl implements CourseService{
         User user = loginUser.getUser();
         
         QueryWrapper<Course> courseQueryWrapper = new QueryWrapper<>();
+        courseQueryWrapper.eq("status",1);
         List<Course> courses = courseMapper.selectList(courseQueryWrapper);
         
         List<StudentGetCourseVo> studentGetCourseVos = new ArrayList<>();
@@ -330,12 +332,11 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public R adminGetRecord() {
-        //仅选取开启选课状态的课程选课记录
+        //获取课程选课记录
         List<SelectCourse> list=selectCourseMapper.selectList(null);
         List<JSONObject> list1=new ArrayList<>();
         for(SelectCourse selectCourse:list){
             Course course=courseMapper.selectById(selectCourse.getCourseId());
-            if(course.getStatus()==0) continue;
             User user=userMapper.selectById(selectCourse.getStudentId());
             JSONObject jsonObject=new JSONObject();
             jsonObject.put("number",user.getNumber());
@@ -367,6 +368,37 @@ public class CourseServiceImpl implements CourseService{
         courseMapper.updateById(newCourse);
 
         return R.ok();
+    }
+
+    @Override
+    public R studentGetSelf() {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser=(UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+
+        QueryWrapper<Course> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("status",0);
+        List<Course> list=courseMapper.selectList(queryWrapper);
+
+        List<JSONObject> jsonObjectList=new ArrayList<>();
+        for(Course course:list){
+            QueryWrapper<SelectCourse> selectCourseQueryWrapper=new QueryWrapper<>();
+            selectCourseQueryWrapper.eq("course_id",course.getId()).eq("student_id",user.getId());
+            SelectCourse selectCourse=selectCourseMapper.selectOne(selectCourseQueryWrapper);
+            if(selectCourse==null) continue;
+            User teacher=userMapper.selectById(course.getTeacherId());
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("id",course.getId());
+            jsonObject.put("course_name",course.getCourseName());
+            jsonObject.put("groupId",course.getGroupId());
+            jsonObject.put("address",course.getAddress());
+            jsonObject.put("teacher_name",teacher.getName());
+            jsonObjectList.add(jsonObject);
+        }
+
+        return R.ok().data("CourseList",jsonObjectList);
     }
     
 }

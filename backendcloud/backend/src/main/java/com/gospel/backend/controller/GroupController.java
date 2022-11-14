@@ -2,6 +2,7 @@ package com.gospel.backend.controller;
 
 import com.gospel.backend.common.R;
 import com.gospel.backend.pojo.vo.GetAllMembersVo;
+import com.gospel.backend.pojo.vo.SearchGroupVo;
 import com.gospel.backend.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class GroupController {
     @PostMapping("/getAllMembers")
     public R getAllMembers(@RequestBody GetAllMembersVo getAllMembersVo){
         return groupService.getAllMembers(getAllMembersVo);
+    }
+    
+    @PostMapping("/search")
+    public R getGroupByNameOrNumber(@RequestBody SearchGroupVo searchGroupVo) {
+        return groupService.getGroupByNameOrNumber(searchGroupVo);
     }
 }
 

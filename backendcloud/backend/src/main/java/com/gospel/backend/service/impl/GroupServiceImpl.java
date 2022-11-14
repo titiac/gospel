@@ -2,6 +2,7 @@ package com.gospel.backend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gospel.backend.common.R;
+import com.gospel.backend.common.ResultEnum;
 import com.gospel.backend.mapper.FzuGroupMapper;
 import com.gospel.backend.mapper.GroupMemberMapper;
 import com.gospel.backend.mapper.GroupMessageMapper;
@@ -10,10 +11,7 @@ import com.gospel.backend.pojo.FzuGroup;
 import com.gospel.backend.pojo.GroupMember;
 import com.gospel.backend.pojo.GroupMessage;
 import com.gospel.backend.pojo.User;
-import com.gospel.backend.pojo.vo.GetAllMembersVo;
-import com.gospel.backend.pojo.vo.GetMyGroupVo;
-import com.gospel.backend.pojo.vo.GroupMessageVo;
-import com.gospel.backend.pojo.vo.ReturnGroupMembersVo;
+import com.gospel.backend.pojo.vo.*;
 import com.gospel.backend.service.GroupService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import com.gospel.backend.utils.GroupMessageChangeUtil;
@@ -24,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @program: backendcloud
@@ -130,6 +129,44 @@ public class GroupServiceImpl implements GroupService {
         
         
         return R.ok().data("AllMembers", returnGroupMembersVos);
+    }
+
+    @Override
+    public R getGroupByNameOrNumber(SearchGroupVo searchGroupVo) {
+        String keyword = searchGroupVo.getNameOrNumber();
+
+        if(keyword == null || keyword.length() == 0) {
+            return R.error().resultEnum(ResultEnum.GROUP_FOUND_ERROR);
+        }
+        
+        QueryWrapper<FzuGroup> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("group_number", keyword).or().like("group_name", keyword);
+        
+        List<FzuGroup> groups = fzuGroupMapper.selectList(queryWrapper); 
+        List<SearchGroupReturnVo> searchGroupReturnVos = new ArrayList<>();
+        for(FzuGroup fzuGroup : groups){
+            Integer groupId = fzuGroup.getId();
+
+            QueryWrapper<GroupMember> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("group_id", groupId);
+            List<GroupMember> groupMembers = groupMemberMapper.selectList(queryWrapper1);
+            Integer groupMemberNum = groupMembers.size();
+            
+            List<User> adminList = new ArrayList<>();
+            for(GroupMember groupMember: groupMembers) {
+                if(Objects.equals(groupMember.getMemberType(), "admin")){
+                    Integer adminId = groupMember.getUserId();
+                    System.out.println(adminId);
+                    User admin = userMapper.selectById(adminId);
+                    adminList.add(admin);
+                }
+            }
+            searchGroupReturnVos.add(new SearchGroupReturnVo(fzuGroup, adminList, groupMemberNum)); 
+        }
+        if(searchGroupReturnVos.size() == 0){
+            searchGroupReturnVos = null;
+        }
+        return R.ok().data("groups", searchGroupReturnVos);
     }
 }
 

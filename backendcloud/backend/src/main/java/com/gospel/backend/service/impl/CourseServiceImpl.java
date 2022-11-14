@@ -1,5 +1,6 @@
 package com.gospel.backend.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.gospel.backend.common.R;
@@ -27,12 +28,12 @@ import java.util.Random;
 /**
  * @program: backendcloud
  * @description: 与课程有关的服务
- * @author: zhw
+ * @author: zhw,lzp
  * @created: 2022/11/12 10:56
  */
 @Service
 public class CourseServiceImpl implements CourseService{
-    
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
@@ -325,6 +326,28 @@ public class CourseServiceImpl implements CourseService{
         
         return R.ok().data("allCourses", studentGetCourseVos);
     }
+
+    @Override
+    public R adminGetRecord() {
+        //仅选取开启选课状态的课程选课记录
+        List<SelectCourse> list=selectCourseMapper.selectList(null);
+        List<JSONObject> list1=new ArrayList<>();
+        for(SelectCourse selectCourse:list){
+            Course course=courseMapper.selectById(selectCourse.getCourseId());
+            if(course.getStatus()==0) continue;
+            User user=userMapper.selectById(selectCourse.getStudentId());
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("number",user.getNumber());
+            jsonObject.put("name",user.getName());
+            jsonObject.put("major",user.getMajor());
+            jsonObject.put("courseName",course.getCourseName());
+            User teacher=userMapper.selectById(course.getTeacherId());
+            jsonObject.put("teacher",teacher.getName());
+            list1.add(jsonObject);
+        }
+        return R.ok().data("recordList",list1);
+    }
+
     
 }
 

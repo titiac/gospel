@@ -13,5 +13,7 @@ public interface CourseService {
     R adminGetCourse(Integer type);
 
     R studentGet();
+
+    R adminGetRecord();
     
 }

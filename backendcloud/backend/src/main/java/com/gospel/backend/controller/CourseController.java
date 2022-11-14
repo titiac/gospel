@@ -93,5 +93,17 @@ public class CourseController {
     public R adminGetCloseCourse(){
         return courseService.adminGetCourse(3);
     }
+
+    /**
+     * @Author: lzp
+     * @Description: 管理员获取正在选课的课程的选课记录
+     * @DateTime: 2022/11/14 11:10
+     */
+
+    @GetMapping("/admin/getRecord")
+    public R adminGetRecord(){
+        return courseService.adminGetRecord();
+    }
+
 }
 

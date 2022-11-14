@@ -9,6 +9,7 @@ import com.gospel.backend.pojo.*;
 import com.gospel.backend.pojo.vo.AddCourseVo;
 import com.gospel.backend.pojo.vo.AdminGetCourseVo;
 import com.gospel.backend.pojo.vo.StudentGetCourseVo;
+import com.gospel.backend.pojo.vo.UpdateCourseVo;
 import com.gospel.backend.service.CourseService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
 import org.slf4j.Logger;
@@ -348,6 +349,25 @@ public class CourseServiceImpl implements CourseService{
         return R.ok().data("recordList",list1);
     }
 
+    @Override
+    public R updateCourse(UpdateCourseVo updateCourseVo) {
+        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("name",updateCourseVo.getTeacherName()).eq("flag",1);
+        User teacher=userMapper.selectOne(queryWrapper);
+        if(teacher==null){
+            return R.error().data("error_message","该教师不存在");
+        }
+
+        Course course=courseMapper.selectById(updateCourseVo.getId());
+
+        Course newCourse=new Course(
+                updateCourseVo.getId(),updateCourseVo.getCourseName(),teacher.getId(),updateCourseVo.getLimitNum(),course.getGroupId(),updateCourseVo.getAddress(),course.getStatus()
+        );
+
+        courseMapper.updateById(newCourse);
+
+        return R.ok();
+    }
     
 }
 

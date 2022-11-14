@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class UpdateCourseVo {
     private Integer id;
     private String courseName;
-    private String teacherId;
+    private String teacherName;
     private Integer limitNum;       // 课程限选人数
     private String address;         // 上课地址
 }

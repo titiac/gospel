@@ -2,6 +2,7 @@ package com.gospel.backend.controller;
 
 import com.gospel.backend.common.R;
 import com.gospel.backend.pojo.vo.AddCourseVo;
+import com.gospel.backend.pojo.vo.UpdateCourseVo;
 import com.gospel.backend.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -103,6 +104,17 @@ public class CourseController {
     @GetMapping("/admin/getRecord")
     public R adminGetRecord(){
         return courseService.adminGetRecord();
+    }
+
+    /**
+     * @Author: lzp
+     * @Description: 管理员修改选课信息
+     * @DateTime: 2022/11/14 11:47
+     */
+
+    @PostMapping("/admin/updateCourse")
+    public R updateCourse(@RequestBody UpdateCourseVo updateCourseVo){
+        return courseService.updateCourse(updateCourseVo);
     }
 
 }

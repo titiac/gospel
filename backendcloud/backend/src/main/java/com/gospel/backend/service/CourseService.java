@@ -2,6 +2,7 @@ package com.gospel.backend.service;
 
 import com.gospel.backend.common.R;
 import com.gospel.backend.pojo.vo.AddCourseVo;
+import com.gospel.backend.pojo.vo.UpdateCourseVo;
 
 public interface CourseService {
     R adminAddCourse(AddCourseVo addCourseVo);
@@ -15,5 +16,7 @@ public interface CourseService {
     R studentGet();
 
     R adminGetRecord();
+
+    R updateCourse(UpdateCourseVo updateCourseVo);
     
 }

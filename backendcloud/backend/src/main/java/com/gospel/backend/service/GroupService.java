@@ -19,4 +19,6 @@ public interface GroupService {
     R inviteMembers(InviteOrDeleteMembersVo inviteOrDeleteMembersVo);
 
     R getRequestList();
+
+    R dealRequest(DealGroupRequestVo dealGroupRequestVo);
 }

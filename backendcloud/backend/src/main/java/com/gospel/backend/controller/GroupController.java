@@ -107,8 +107,8 @@ public class GroupController {
      * @DateTime: 2022/11/14 14:30
      */
     @PostMapping("/dealRequest")
-    public R dealRequest(@RequestBody GroupRequestIdVo groupRequestIdVo) {
-        return null;
+    public R dealRequest(@RequestBody DealGroupRequestVo dealGroupRequestVo) {
+        return groupService.dealRequest(dealGroupRequestVo);
     }
     
     

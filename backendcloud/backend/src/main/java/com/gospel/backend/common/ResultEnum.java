@@ -33,7 +33,8 @@ public enum ResultEnum {
     GROUP_ID_ERROR(400, "群id不可用"),
     GROUP_MEMBER_EXIST(400, "您已加入该群"),
     GROUP_ENTER_REQUEST_EXIST(400, "您之前的加群请求还未被处理，请耐心等待"),
-    GROUP_IS_DROP(400, "群聊已经被解散")
+    GROUP_IS_DROP(400, "群聊已经被解散"),
+    GROUP_REQUEST_PARAMETER_ERROR(400, "参数错误")
     ;
 
 

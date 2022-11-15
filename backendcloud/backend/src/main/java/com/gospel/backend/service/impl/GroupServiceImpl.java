@@ -434,32 +434,38 @@ public class GroupServiceImpl implements GroupService {
                 wrapper3.eq("group_id", groupId)
                         .and(i -> i.eq("user_id", newMemberId));
                 GroupMember oldMember = groupMemberMapper.selectOne(wrapper3);
-                
+
+
+                /** 查询之前有无加群请求 */
+                QueryWrapper<GroupEnterRequest> wrapper4 = new QueryWrapper<>();
+                wrapper4.eq("group_id", groupId)
+                        .and(i -> i.eq("user_from", newMemberId))
+                        .and(i -> i.eq("status", 0));
+
+                GroupEnterRequest oldEnterRequest = groupEnterRequestMapper.selectOne(wrapper4);
                 if(oldMember != null) {
                     /** 之前在这个群 */
                     if(oldMember.getMemberStatus() == 0) {
-                        /** 被踢出 */
-                        GroupEnterRequest newRequest = new GroupEnterRequest(
-                                null,
-                                newMemberId,
-                                groupId,
-                                0,
-                                new Date(),
-                                null,
-                                null
-                        );
-                        groupEnterRequestMapper.insert(newRequest);
+                        /** 被踢出, 查询之前有无加群请求未被处理 */
+                        if(oldEnterRequest != null){
+                            /** 存在加群请求还未被处理 */
+                            log.info("用户{}已经已经请求加入{}，不做处理", newMemberId, groupId);
+                        } else {
+                            GroupEnterRequest newRequest = new GroupEnterRequest(
+                                    null,
+                                    newMemberId,
+                                    groupId,
+                                    0,
+                                    new Date(),
+                                    null,
+                                    null
+                            );
+                            groupEnterRequestMapper.insert(newRequest);
+                        }
                     } else {
                         log.info("用户{}已经在群{}中，不做处理", newMemberId, groupId);
                     }
                 } else {
-                    /** 查询之前有无加群请求 */
-                    QueryWrapper<GroupEnterRequest> wrapper4 = new QueryWrapper<>();
-                    wrapper4.eq("group_id", groupId)
-                            .and(i -> i.eq("user_from", newMemberId))
-                            .and(i -> i.eq("status", 0));
-                    
-                    GroupEnterRequest oldEnterRequest = groupEnterRequestMapper.selectOne(wrapper4);
                     if(oldEnterRequest != null){
                         /** 存在加群请求还未被处理 */
                         log.info("用户{}已经已经请求加入{}，不做处理", newMemberId, groupId);
@@ -531,6 +537,92 @@ public class GroupServiceImpl implements GroupService {
             }
         }
         return R.ok().data("RequestList", adminGetRequestListReturns);
+    }
+
+    @Override
+    public R dealRequest(DealGroupRequestVo dealGroupRequestVo) {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer myselfId = user.getId();
+        
+        
+        Integer groupRequestId = dealGroupRequestVo.getRequestListId();
+        Integer operate = dealGroupRequestVo.getOperate();
+        if(groupRequestId == null || operate == null) {
+            log.info("处理携带的参数不足");
+            return R.error().resultEnum(ResultEnum.GROUP_REQUEST_PARAMETER_ERROR);
+        }
+        if(operate == 0){
+            log.info("发送处理，但是处理意见不是同意也不是拒绝");
+            return R.error().resultEnum(ResultEnum.GROUP_REQUEST_PARAMETER_ERROR);
+        }
+        
+        GroupEnterRequest groupEnterRequest = groupEnterRequestMapper.selectById(groupRequestId);
+
+        if(groupEnterRequest.getStatus() != 0) {
+            log.info("该请求已被处理");
+            return R.error().resultEnum(ResultEnum.ILLEGAL_OPERATION);
+        }
+        
+        /** 判断是不是该群的管理员 */
+        Integer groupId = groupEnterRequest.getGroupId();
+        FzuGroup fzuGroup = fzuGroupMapper.selectById(groupId);
+        if(fzuGroup == null) {
+            log.info("不存在目标群");
+            return R.error().resultEnum(ResultEnum.GROUP_NOT_FOUND);
+        }
+        
+        if(fzuGroup.getStatus() == 0) {
+            log.info("群聊已被解散, 无效处理");
+            return R.error().resultEnum(ResultEnum.GROUP_IS_DROP);
+        }
+
+        QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
+        wrapper.eq("group_id", groupId)
+                .and(i -> i.eq("user_id", myselfId));
+        GroupMember groupMember = groupMemberMapper.selectOne(wrapper);
+        
+        if(groupMember == null || !Objects.equals(groupMember.getMemberType(), "admin")) {
+            log.info("不是该群的成员或不是管理员");
+            return R.error().resultEnum(ResultEnum.ILLEGAL_OPERATION);
+        }
+
+        groupEnterRequest.setStatus(operate);
+        groupEnterRequest.setDealTime(new Date());
+        groupEnterRequest.setDealAdminId(myselfId);
+        
+        groupEnterRequestMapper.updateById(groupEnterRequest);
+        
+        /** 如果同意要把用户添加至群聊 */
+        
+        if(operate == 1) {
+            QueryWrapper<GroupMember> wrapper1 = new QueryWrapper<>();
+            wrapper1.eq("group_id", groupId)
+                    .and(i -> i.eq("user_id", groupEnterRequest.getUserFrom()));
+            
+            GroupMember oldGroupMember = groupMemberMapper.selectOne(wrapper1);
+            
+            /** 如果之前有在该群 */
+            if(oldGroupMember != null) {
+                oldGroupMember.setMemberStatus(1);
+                oldGroupMember.setMemberType("common");
+                groupMemberMapper.updateById(oldGroupMember);
+            } else {
+                GroupMember newGroupMember = new GroupMember(
+                        null,
+                        groupId,
+                        groupEnterRequest.getUserFrom(),
+                        "common",
+                        1
+                );
+                groupMemberMapper.insert(newGroupMember);
+            }
+        }
+        
+        return R.ok();
     }
 }
 

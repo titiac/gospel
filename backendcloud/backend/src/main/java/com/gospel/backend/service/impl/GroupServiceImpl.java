@@ -624,5 +624,135 @@ public class GroupServiceImpl implements GroupService {
         
         return R.ok();
     }
-}
 
+    @Override
+    public R deleteMembers(InviteOrDeleteMembersVo inviteOrDeleteMembersVo) {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer myselfId = user.getId();
+
+        Integer groupId = inviteOrDeleteMembersVo.getGroupId();
+        if(groupId == null)  {
+            log.info("缺少groupId参数");
+            return R.error().resultEnum(ResultEnum.GROUP_FOUND_ERROR);
+        }
+        
+        FzuGroup fzuGroup = fzuGroupMapper.selectById(groupId);
+        if(fzuGroup == null) {
+            log.info("不存在目标群");
+            return R.error().resultEnum(ResultEnum.GROUP_NOT_FOUND);
+        }
+
+        if(fzuGroup.getStatus() == 0) {
+            log.info("群聊已被解散, 无效处理");
+            return R.error().resultEnum(ResultEnum.GROUP_IS_DROP);
+        }
+
+        QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
+        wrapper.eq("group_id", groupId)
+                .and(i -> i.eq("user_id", myselfId));
+        GroupMember groupMember = groupMemberMapper.selectOne(wrapper);
+
+        if(groupMember == null || !Objects.equals(groupMember.getMemberType(), "admin")) {
+            log.info("不是该群的成员或不是管理员");
+            return R.error().resultEnum(ResultEnum.ILLEGAL_OPERATION);
+        }
+        
+        List<Integer> list = inviteOrDeleteMembersVo.getMembersId();
+        
+        for(Integer id : list) {
+            QueryWrapper<GroupMember> wrapper1 = new QueryWrapper<>();
+            wrapper1.eq("user_id", id)
+                    .and(i -> i.eq("group_id", groupId));
+            GroupMember groupMember1 = groupMemberMapper.selectOne(wrapper);
+            
+            groupMember1.setMemberStatus(0);
+            groupMemberMapper.updateById(groupMember1);
+        }
+        
+        return R.ok().resultEnum(ResultEnum.GROUP_DELETE_MEMBERS_SUCCESS);
+    }
+
+    @Override
+    public R deleteGroup(GroupIdVo groupIdVo) {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer myselfId = user.getId();
+
+        Integer groupId = groupIdVo.getGroupId();
+        if(groupId == null)  {
+            log.info("缺少groupId参数");
+            return R.error().resultEnum(ResultEnum.GROUP_ID_ERROR);
+        }
+
+        QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
+        wrapper.eq("group_id", groupId)
+                .and(i -> i.eq("user_id", myselfId));
+        GroupMember admin = groupMemberMapper.selectOne(wrapper);
+        if(!Objects.equals(admin.getMemberType(), "admin")) {
+            return R.error().resultEnum(ResultEnum.ILLEGAL_OPERATION);
+        }
+        
+        FzuGroup fzuGroup = fzuGroupMapper.selectById(groupId);
+        if(fzuGroup == null) {
+            log.info("根据群id {} 找不到相关群",groupId);
+            return R.error().resultEnum(ResultEnum.GROUP_FOUND_ERROR);
+        }
+        
+        if(fzuGroup.getStatus() == 0) {
+            log.info("群聊已经解散，请勿重复操作");
+            return R.error().resultEnum(ResultEnum.GROUP_IS_DROP);
+        }
+        
+        fzuGroup.setStatus(0);
+        fzuGroupMapper.updateById(fzuGroup);
+        
+        return R.ok().resultEnum(ResultEnum.GROUP_DROP_SUCCESS);
+    }
+
+    @Override
+    public R outGroup(GroupIdVo groupIdVo) {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
+        User user = loginUser.getUser();
+        Integer myselfId = user.getId();
+
+        Integer groupId = groupIdVo.getGroupId();
+        if(groupId == null)  {
+            log.info("缺少groupId参数");
+            return R.error().resultEnum(ResultEnum.GROUP_ID_ERROR);
+        }
+
+        QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
+        wrapper.eq("group_id", groupId)
+                .and(i -> i.eq("user_id", myselfId));
+        GroupMember member = groupMemberMapper.selectOne(wrapper);
+        if(member == null) {
+            log.info("不存在该群员记录");
+            return R.error().resultEnum(ResultEnum.ILLEGAL_OPERATION);
+        }
+        
+        if(Objects.equals(member.getMemberType(), "admin")) {
+            log.info("管理员无法退出群聊,需要解散");
+            return R.error().resultEnum(ResultEnum.ILLEGAL_OPERATION);
+        }
+        
+        if(member.getMemberStatus() == 0) {
+            log.info("用户{}已退出群聊, 请勿重复操作", myselfId);
+            return R.error().resultEnum(ResultEnum.GROUP_OUT_ERROR);
+        }
+        
+        member.setMemberStatus(0);
+        groupMemberMapper.updateById(member);
+        
+        return R.ok();
+    }
+}

@@ -21,4 +21,10 @@ public interface GroupService {
     R getRequestList();
 
     R dealRequest(DealGroupRequestVo dealGroupRequestVo);
+
+    R deleteMembers(InviteOrDeleteMembersVo inviteOrDeleteMembersVo);
+
+    R deleteGroup(GroupIdVo groupIdVo);
+
+    R outGroup(GroupIdVo groupIdVo);
 }

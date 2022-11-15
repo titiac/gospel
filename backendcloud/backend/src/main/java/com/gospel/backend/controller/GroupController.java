@@ -118,8 +118,8 @@ public class GroupController {
      * @DateTime: 2022/11/14 14:37
      */
     @PostMapping("/deleteMember")
-    public R deleteMember(@RequestBody InviteOrDeleteMembersVo inviteOrDeleteMembersVo) {
-        return null;
+    public R deleteMembers(@RequestBody InviteOrDeleteMembersVo inviteOrDeleteMembersVo) {
+        return groupService.deleteMembers(inviteOrDeleteMembersVo);
     }
     
     /**
@@ -129,7 +129,7 @@ public class GroupController {
      */
     @PostMapping("/delete")
     public R deleteGroup(@RequestBody GroupIdVo groupIdVo) {
-        return null;
+        return groupService.deleteGroup(groupIdVo);
     }
     
     /**
@@ -139,7 +139,7 @@ public class GroupController {
      */
     @PostMapping("/out")
     public R OutGroup(@RequestBody GroupIdVo groupIdVo) {
-        return null;
+        return groupService.outGroup(groupIdVo);
     }
 }
 

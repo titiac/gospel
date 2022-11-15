@@ -34,7 +34,11 @@ public enum ResultEnum {
     GROUP_MEMBER_EXIST(400, "您已加入该群"),
     GROUP_ENTER_REQUEST_EXIST(400, "您之前的加群请求还未被处理，请耐心等待"),
     GROUP_IS_DROP(400, "群聊已经被解散"),
-    GROUP_REQUEST_PARAMETER_ERROR(400, "参数错误")
+    GROUP_REQUEST_PARAMETER_ERROR(400, "参数错误"),
+    GROUP_IS_DROP_TWICE(400, "群聊已被解散，请勿重复操作"),
+    GROUP_DROP_SUCCESS(200, "群聊解散成功"),
+    GROUP_DELETE_MEMBERS_SUCCESS(200, "踢出群成员成功"),
+    GROUP_OUT_ERROR(400, "您已退出群聊，请勿重复操作")
     ;
 
 

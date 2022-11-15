@@ -63,14 +63,16 @@ public class AddUserServiceImpl implements AddUserService {
         }
 
         String photo = "https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png";
-        String profile = "这个用户很懒，什么也没留下";
-        String username = null;
+        String profile ;
+        String username ;
         SimpleDateFormat sdf=new SimpleDateFormat("yyMMddHHmmss");
         Random r = new Random();
 
         if(flag == 1) {
+            profile = "https://csip.fzu.edu.cn/?page_id=636";
             username = "T" + sdf.format(new Date()) + r.nextInt(9);
         }else {
+            profile = "https://www.cnblogs.com/xuanyuan/";
             username = "S" + sdf.format(new Date()) + r.nextInt(9);
         }
 

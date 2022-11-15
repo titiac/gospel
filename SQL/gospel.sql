@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : MySQL80
+ Source Server         : localhost_3306
  Source Server Type    : MySQL
- Source Server Version : 80030 (8.0.30)
+ Source Server Version : 80030
  Source Host           : localhost:3306
  Source Schema         : gospel
 
  Target Server Type    : MySQL
- Target Server Version : 80030 (8.0.30)
+ Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 15/11/2022 21:22:40
+ Date: 15/11/2022 22:13:27
 */
 
 SET NAMES utf8mb4;
@@ -312,13 +312,14 @@ CREATE TABLE `tutor`  (
   `create_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tutor
 -- ----------------------------
 INSERT INTO `tutor` VALUES (1, 13, 17, '2022-11-13 15:47:09');
 INSERT INTO `tutor` VALUES (2, 12, 11, '2022-11-13 16:04:18');
+INSERT INTO `tutor` VALUES (3, 12, 18, '2022-11-15 22:11:52');
 
 -- ----------------------------
 -- Table structure for tutor_request
@@ -332,14 +333,16 @@ CREATE TABLE `tutor_request`  (
   `send_time` datetime NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of tutor_request
 -- ----------------------------
 INSERT INTO `tutor_request` VALUES (1, 11, 12, 1, '2022-11-11 23:53:46');
 INSERT INTO `tutor_request` VALUES (2, 16, 14, 0, '2022-11-11 23:53:46');
-INSERT INTO `tutor_request` VALUES (3, 18, 15, 0, '2022-11-13 15:48:29');
+INSERT INTO `tutor_request` VALUES (3, 18, 15, 2, '2022-11-13 15:48:29');
+INSERT INTO `tutor_request` VALUES (4, 17, 13, 1, '2022-11-15 22:10:44');
+INSERT INTO `tutor_request` VALUES (5, 18, 12, 1, '2022-11-15 22:12:11');
 
 -- ----------------------------
 -- Table structure for user

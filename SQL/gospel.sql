@@ -11,7 +11,7 @@
  Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 14/11/2022 19:53:30
+ Date: 15/11/2022 14:02:34
 */
 
 SET NAMES utf8mb4;
@@ -143,12 +143,16 @@ CREATE TABLE `group_enter_request`  (
   `deal_admin_id` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '发送加群请求表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '发送加群请求表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of group_enter_request
 -- ----------------------------
-INSERT INTO `group_enter_request` VALUES (1, 18, 3, 0, '2022-11-14 16:23:05', NULL, NULL);
+INSERT INTO `group_enter_request` VALUES (1, 18, 3, 1, '2022-11-14 16:23:05', '2022-11-15 10:50:26', 11);
+INSERT INTO `group_enter_request` VALUES (2, 13, 2, 1, '2022-11-14 22:10:53', '2022-11-14 22:13:32', 12);
+INSERT INTO `group_enter_request` VALUES (3, 14, 2, 1, '2022-11-14 22:10:54', '2022-11-14 22:13:32', 12);
+INSERT INTO `group_enter_request` VALUES (4, 15, 2, 1, '2022-11-14 22:10:54', '2022-11-14 22:13:32', 12);
+INSERT INTO `group_enter_request` VALUES (5, 12, 3, 0, '2022-11-15 14:02:16', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for group_member
@@ -161,12 +165,12 @@ CREATE TABLE `group_member`  (
   `member_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `member_status` int NULL DEFAULT 1 COMMENT '是否被移除群聊',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群成员表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '群成员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of group_member
 -- ----------------------------
-INSERT INTO `group_member` VALUES (1, 1, 11, 'common', 1);
+INSERT INTO `group_member` VALUES (1, 1, 11, 'common', 0);
 INSERT INTO `group_member` VALUES (2, 1, 12, 'common', 1);
 INSERT INTO `group_member` VALUES (3, 1, 13, 'admin', 1);
 INSERT INTO `group_member` VALUES (4, 1, 1, 'common', 1);
@@ -184,6 +188,10 @@ INSERT INTO `group_member` VALUES (15, 4, 13, 'common', 1);
 INSERT INTO `group_member` VALUES (16, 4, 14, 'common', 1);
 INSERT INTO `group_member` VALUES (17, 4, 15, 'common', 1);
 INSERT INTO `group_member` VALUES (18, 4, 16, 'admin', 1);
+INSERT INTO `group_member` VALUES (19, 2, 13, 'common', 1);
+INSERT INTO `group_member` VALUES (20, 2, 14, 'common', 1);
+INSERT INTO `group_member` VALUES (21, 2, 15, 'common', 1);
+INSERT INTO `group_member` VALUES (22, 3, 18, 'common', 1);
 
 -- ----------------------------
 -- Table structure for group_message

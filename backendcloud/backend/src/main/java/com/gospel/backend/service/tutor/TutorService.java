@@ -14,4 +14,6 @@ public interface TutorService {
 
     public R getRequestListForStudent();
 
+    public R getTeacherAndPeers();
+
 }

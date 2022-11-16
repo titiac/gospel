@@ -3,9 +3,11 @@ package com.gospel.backend.service.impl.tutor;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gospel.backend.common.R;
+import com.gospel.backend.mapper.SingleMessageMapper;
 import com.gospel.backend.mapper.UserMapper;
 import com.gospel.backend.mapper.tutor.TutorMapper;
 import com.gospel.backend.mapper.tutor.TutorRequestMapper;
+import com.gospel.backend.pojo.SingleMessage;
 import com.gospel.backend.pojo.User;
 import com.gospel.backend.pojo.tutor.Tutor;
 import com.gospel.backend.pojo.tutor.TutorRequest;
@@ -38,6 +40,9 @@ public class TutorServiceImpl implements TutorService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private SingleMessageMapper singleMessageMapper;
 
     @Override
     public R getTutorRequestList() {
@@ -214,6 +219,73 @@ public class TutorServiceImpl implements TutorService {
         }
         return R.ok().data("requestList",list1);
 
+    }
+
+    @Override
+    public R getTeacherAndPeers() {
+        UsernamePasswordAuthenticationToken authentication=
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl loginUser=(UserDetailsImpl) authentication.getPrincipal();
+        User user=loginUser.getUser();
+
+        QueryWrapper<Tutor> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("student_id",user.getId());
+        Tutor tutor=tutorMapper.selectOne(queryWrapper);
+
+        List<JSONObject> list=new ArrayList<>();
+        if(tutor==null){
+            return R.ok().data("list",list);
+        }
+
+        User teacher=userMapper.selectById(tutor.getTutorId());
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("user",teacher);
+
+        QueryWrapper<SingleMessage> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.nested(i -> i.eq("user_from", user.getId()).eq("user_to", teacher.getId()))
+                .or(i -> i.eq("user_from", teacher.getId()).eq("user_to", user.getId()))
+                .orderByDesc("send_time");
+        List<SingleMessage> singleMessages = singleMessageMapper.selectList(queryWrapper1);
+
+        SingleMessage singleMessage = null;
+        if(!singleMessages.isEmpty()) {
+            singleMessage = singleMessages.get(0);
+        }
+        jsonObject.put("lastMessage",singleMessage);
+
+        list.add(jsonObject);
+
+
+        queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("tutor_id",tutor.getTutorId());
+        List<Tutor> list1=tutorMapper.selectList(queryWrapper);
+
+        for(Tutor tutor1:list1){
+            if(tutor1.getStudentId().equals(user.getId())){
+                continue;
+            }
+            User user1=userMapper.selectById(tutor1.getStudentId());
+            jsonObject=new JSONObject();
+            jsonObject.put("user",user1);
+
+            queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.nested(i -> i.eq("user_from", user.getId()).eq("user_to", user1.getId()))
+                    .or(i -> i.eq("user_from", user1.getId()).eq("user_to", user.getId()))
+                    .orderByDesc("send_time");
+            singleMessages = singleMessageMapper.selectList(queryWrapper1);
+
+            singleMessage = null;
+            if(!singleMessages.isEmpty()) {
+                singleMessage = singleMessages.get(0);
+            }
+
+            jsonObject.put("lastMessage",singleMessage);
+
+            list.add(jsonObject);
+        }
+
+
+        return R.ok().data("list",list);
     }
 
 }

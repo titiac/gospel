@@ -11,7 +11,7 @@
  Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 15/11/2022 22:13:27
+ Date: 16/11/2022 21:33:36
 */
 
 SET NAMES utf8mb4;
@@ -281,7 +281,7 @@ CREATE TABLE `single_message`  (
   `message` varchar(10000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `is_read` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '消息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '消息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of single_message
@@ -300,6 +300,8 @@ INSERT INTO `single_message` VALUES (48, 12, 11, '钱牧', 'https://cdn.acwing.c
 INSERT INTO `single_message` VALUES (49, 11, 12, '赵谦', 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '2022-11-10 18:51:39', '', 'text', '我是赵谦', 0);
 INSERT INTO `single_message` VALUES (50, 11, 12, '赵谦', 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '2022-11-10 18:53:00', '', 'text', '我是赵谦', 0);
 INSERT INTO `single_message` VALUES (51, 11, 12, '赵谦', 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '2022-11-10 18:53:30', '', 'text', '我是赵谦', 0);
+INSERT INTO `single_message` VALUES (52, 12, 18, '钱牧', 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '2022-11-10 17:38:45', '', 'text', '窝嫩叠', 0);
+INSERT INTO `single_message` VALUES (53, 11, 18, '赵谦', 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '2022-11-10 18:53:30', '', 'text', '窝嫩叠', 0);
 
 -- ----------------------------
 -- Table structure for tutor
@@ -367,13 +369,13 @@ CREATE TABLE `user`  (
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES (1, 'admin', '张三', '$2a$10$IcYbYb0GSaL.WS17fbvDEegjMwC5qywGzL608HGUE8BZY5WaNHl.y', 0, 'https://cdn.acwing.com/media/user/profile/photo/149957_lg_de39db8b80.jpg', NULL, NULL, ' 我是超级管理员', 0);
-INSERT INTO `user` VALUES (11, 'S2211032345231', '赵谦', '$2a$10$uE2dnXZZf4PdsAy7rI4JpeEf1kROYlos6WfOC6lDNt07OIU03BCg6', 2, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '电气工程与自动化学院', '电气工程与自动化', 'https://www.cnblogs.com/operationhome/', 0);
+INSERT INTO `user` VALUES (11, 'S2211032345231', '赵谦', '$2a$10$uE2dnXZZf4PdsAy7rI4JpeEf1kROYlos6WfOC6lDNt07OIU03BCg6', 2, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '电气工程与自动化学院', '电气工程与自动化', 'https://bbs.csdn.net/topics/608312514', 0);
 INSERT INTO `user` VALUES (12, 'T2211032345497', '钱牧', '$2a$10$wnWgUZQo7uY3q6raeZ0RlO6hWRgq9eXLlMJym5eh5F7Y6jdG6fnKe', 1, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '电气工程与自动化学院', '电气工程与自动化', 'https://csip.fzu.edu.cn/?page_id=636', 0);
 INSERT INTO `user` VALUES (13, 'T2211061442486', '吴阶', '$2a$10$wT/iugV3OVIBmNhbc8DZtOBIF5IqArAUcRhIbDV.opIGjO77Dk2De', 1, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '电气工程与自动化学院', '人工智能', 'https://csip.fzu.edu.cn/?page_id=636', 0);
 INSERT INTO `user` VALUES (14, 'T2211111512524', '张二', '$2a$10$0OkSj5vsGLV8Eez18iq4zeCPL3YYwUTspKpSN9cfv2tPwG5RVFdHe', 1, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '电气工程与自动化学院', '', 'https://csip.fzu.edu.cn/?page_id=636', 0);
 INSERT INTO `user` VALUES (15, 'T2211111633052', '张三丰', '$2a$10$kPieo3eI/v8JVXYj1mjg/uRPO5tt2mi4IKkcttvi8sFwglEcPRCMe', 1, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '计算机与大数据学院', '', 'https://csip.fzu.edu.cn/?page_id=636', 0);
-INSERT INTO `user` VALUES (16, 'S2211121150592', '张大彪', '$2a$10$nhECOxbCRWbq.lu7cOm9X.2SIvuzkSSVhTD6nCdqt0bvqOMmXE2s.', 2, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '计算机与大数据学院', '人工智能', 'https://www.cnblogs.com/skychen1218/', 0);
-INSERT INTO `user` VALUES (17, 'S2211121151460', '柱子', '$2a$10$BEKwZnDcnvto8Q8rG2M2fOgYCBY1Q44EXxK77GgHxk06I3Sae1rni', 2, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '计算机与大数据学院', '计算机科学与技术', 'https://www.cnblogs.com/xuanyuan/', 0);
-INSERT INTO `user` VALUES (18, 'S2211121152050', '孙正义', '$2a$10$qMfNt.UNwV3XaS97gAqu2OLEj/ehG8ldfeRI0CkEkHPACAoT8oV4G', 2, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '计算机与大数据学院', '大数据科学', 'https://www.cnblogs.com/xuanyuan/', 0);
+INSERT INTO `user` VALUES (16, 'S2211121150592', '张大彪', '$2a$10$nhECOxbCRWbq.lu7cOm9X.2SIvuzkSSVhTD6nCdqt0bvqOMmXE2s.', 2, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '计算机与大数据学院', '人工智能', 'https://bbs.csdn.net/topics/608312514', 0);
+INSERT INTO `user` VALUES (17, 'S2211121151460', '柱子', '$2a$10$BEKwZnDcnvto8Q8rG2M2fOgYCBY1Q44EXxK77GgHxk06I3Sae1rni', 2, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '计算机与大数据学院', '计算机科学与技术', 'https://bbs.csdn.net/topics/608312514', 0);
+INSERT INTO `user` VALUES (18, 'S2211121152050', '孙正义', '$2a$10$qMfNt.UNwV3XaS97gAqu2OLEj/ehG8ldfeRI0CkEkHPACAoT8oV4G', 2, 'https://cdn.acwing.com/media/article/image/2022/08/09/1_1db2488f17-anonymous.png', '计算机与大数据学院', '大数据科学', 'https://bbs.csdn.net/topics/608312514', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

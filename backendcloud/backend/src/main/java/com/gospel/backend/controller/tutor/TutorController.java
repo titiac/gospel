@@ -41,4 +41,9 @@ public class TutorController {
         return tutorService.getRequestListForStudent();
     }
 
+    @GetMapping("/tutor/getTeacherAndPeers")
+    public R getTeacherAndPeers(){
+        return tutorService.getTeacherAndPeers();
+    }
+
 }

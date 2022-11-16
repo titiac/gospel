@@ -180,12 +180,27 @@ public class TutorServiceImpl implements TutorService {
         QueryWrapper<Tutor> queryWrapper=new QueryWrapper<>();
         queryWrapper.eq("tutor_id",user.getId());
         List<Tutor> list=tutorMapper.selectList(queryWrapper);
-        List<User> userList=new ArrayList<>();
+        List<JSONObject> userList=new ArrayList<>();
         for(Tutor tutor:list){
             QueryWrapper<User> queryWrapper1=new QueryWrapper<>();
             queryWrapper1.eq("id",tutor.getStudentId());
             User user1=userMapper.selectOne(queryWrapper1);
-            userList.add(user1);
+            JSONObject jsonObject=new JSONObject();
+            jsonObject.put("user",user1);
+
+            queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.nested(i -> i.eq("user_from", user.getId()).eq("user_to", user1.getId()))
+                    .or(i -> i.eq("user_from", user1.getId()).eq("user_to", user.getId()))
+                    .orderByDesc("send_time");
+            List<SingleMessage> singleMessages = singleMessageMapper.selectList(queryWrapper1);
+
+            SingleMessage singleMessage = null;
+            if(!singleMessages.isEmpty()) {
+                singleMessage = singleMessages.get(0);
+            }
+            jsonObject.put("lastMessage",singleMessage);
+
+            userList.add(jsonObject);
         }
 
         return R.ok().data("student_list",userList);

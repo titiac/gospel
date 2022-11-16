@@ -188,11 +188,11 @@ public class TutorServiceImpl implements TutorService {
             JSONObject jsonObject=new JSONObject();
             jsonObject.put("user",user1);
 
-            queryWrapper1 = new QueryWrapper<>();
-            queryWrapper1.nested(i -> i.eq("user_from", user.getId()).eq("user_to", user1.getId()))
+            QueryWrapper<SingleMessage> queryWrapper2 = new QueryWrapper<>();
+            queryWrapper2.nested(i -> i.eq("user_from", user.getId()).eq("user_to", user1.getId()))
                     .or(i -> i.eq("user_from", user1.getId()).eq("user_to", user.getId()))
                     .orderByDesc("send_time");
-            List<SingleMessage> singleMessages = singleMessageMapper.selectList(queryWrapper1);
+            List<SingleMessage> singleMessages = singleMessageMapper.selectList(queryWrapper2);
 
             SingleMessage singleMessage = null;
             if(!singleMessages.isEmpty()) {

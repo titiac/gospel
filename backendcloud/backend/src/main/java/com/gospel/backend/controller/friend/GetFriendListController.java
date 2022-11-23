@@ -11,6 +11,7 @@ public class GetFriendListController {
     @Autowired
     private GetFriendListService getFriendListService;
 
+    
     @GetMapping("/friend/list")
     public R getFriendList(){
         return getFriendListService.getFriendList();

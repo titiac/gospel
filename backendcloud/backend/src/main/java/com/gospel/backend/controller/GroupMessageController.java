@@ -20,11 +20,21 @@ public class GroupMessageController {
     @Autowired
     private GroupMessageService groupMessageService;
 
+    /**
+     * @Author: zhw
+     * @Description: 获取群消息
+     * @DateTime: 2022/11/23 18:09
+     */
     @GetMapping("/getRecentGroupMessages")
     R getGroupMessage(GetGroupMessageVo getGroupMessageVo){
         return groupMessageService.getGroupMessage(getGroupMessageVo);
     }
     
+    /**
+     * @Author: zhw
+     * @Description: 群消息设置已读
+     * @DateTime: 2022/11/23 18:10
+     */
     @PostMapping("/setIsRead")
     R setIsRead(@RequestBody GetGroupMessageVo getGroupMessageVo){
         return groupMessageService.setIsRead(getGroupMessageVo);

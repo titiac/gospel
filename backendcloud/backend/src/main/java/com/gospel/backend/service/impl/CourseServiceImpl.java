@@ -164,7 +164,6 @@ public class CourseServiceImpl implements CourseService{
         User teacher = userMapper.selectById(course.getTeacherId());
         
         String groupNumber = "G" + sdf.format(new Date()) + r.nextInt(9);
-        
         String groupName = course.getCourseName() + " " + course.getAddress() + " " + teacher.getName();
         String photo = "https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png";
         String profile = "这个是"+teacher.getName()+"老师的"+course.getCourseName()+"教学群";

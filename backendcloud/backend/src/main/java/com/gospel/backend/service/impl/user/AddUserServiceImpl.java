@@ -79,7 +79,6 @@ public class AddUserServiceImpl implements AddUserService {
         String password = passwordEncoder.encode("123456");
         String college = adminAddUserVo.getCollege();
         String major = adminAddUserVo.getMajor();
-        
         User newUser = new User(null, username, name, password, flag, photo, college, major, profile, 0);
         userMapper.insert(newUser);
         

@@ -11,7 +11,7 @@
  Target Server Version : 80030 (8.0.30)
  File Encoding         : 65001
 
- Date: 28/11/2022 20:54:06
+ Date: 28/11/2022 21:06:22
 */
 
 SET NAMES utf8mb4;
@@ -36,7 +36,7 @@ CREATE TABLE `course`  (
 -- ----------------------------
 -- Records of course
 -- ----------------------------
-INSERT INTO `course` VALUES (1, '操作系统', 12, 80, NULL, '东三', 0);
+INSERT INTO `course` VALUES (1, '操作系统', 12, 80, 2, '东三', 0);
 INSERT INTO `course` VALUES (2, '离散数学', 13, 80, 5, '西一', 0);
 INSERT INTO `course` VALUES (3, '模拟电路', 14, 80, NULL, '文楼', 1);
 INSERT INTO `course` VALUES (4, '计算机网络技术', 15, 80, NULL, '西一', 1);
@@ -136,11 +136,6 @@ INSERT INTO `fzu_group` VALUES (2, 'G2211121923482', '操作系统 东三 钱牧
 INSERT INTO `fzu_group` VALUES (3, 'G2211141531474', '测试普通用户建群', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-14 15:31:47', '这个群主很懒什么也没留下', 1, NULL);
 INSERT INTO `fzu_group` VALUES (4, 'G2211141800407', '添加删除群聊字段测试', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-14 18:00:41', '这个群主很懒什么也没留下', 1, NULL);
 INSERT INTO `fzu_group` VALUES (5, 'G2211191503255', '离散数学 西一 吴阶', 'https://cdn.acwing.com/media/article/image/2022/11/12/87795_68611bda62-QQ%E5%9B%BE%E7%89%8720221112165243.png', '2022-11-19 15:03:26', '这个是吴阶老师的离散数学教学群', 1, NULL);
-
--- ----------------------------
--- Table structure for group
--- ----------------------------
-DROP TABLE IF EXISTS `group`;
 
 -- ----------------------------
 -- Table structure for group_enter_request
@@ -376,6 +371,9 @@ CREATE TABLE `tutor`  (
 INSERT INTO `tutor` VALUES (1, 13, 17, '2022-11-13 15:47:09');
 INSERT INTO `tutor` VALUES (3, 12, 18, '2022-11-15 22:11:52');
 INSERT INTO `tutor` VALUES (4, 12, 11, '2022-11-19 15:01:40');
+
+
+DROP TABLE IF EXISTS `group`;
 
 -- ----------------------------
 -- Table structure for tutor_request

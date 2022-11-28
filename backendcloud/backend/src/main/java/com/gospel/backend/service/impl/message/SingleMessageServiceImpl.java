@@ -35,6 +35,7 @@ public class SingleMessageServiceImpl implements SingleMessageService {
                 .orderByAsc("send_time");
         List<SingleMessage> resp = singleMessageMapper.selectList(queryWrapper);
         return R.ok().data("singleMessage",resp);
+        
     }
 
     @Override

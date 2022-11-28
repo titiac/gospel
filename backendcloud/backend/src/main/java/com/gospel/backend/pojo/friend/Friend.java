@@ -24,5 +24,6 @@ public class Friend {
     private Integer userFrom;   //谁的好友
     private Integer friendId;   //好友id
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
-    private Date createTime;    //建立关系
+    private Date createTime;    //建立关系时间
+    private Integer friendType;     // 1 是好友 0 是临时会话
 }

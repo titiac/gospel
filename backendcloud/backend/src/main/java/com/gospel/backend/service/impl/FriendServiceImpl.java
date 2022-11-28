@@ -8,6 +8,7 @@ import com.gospel.backend.mapper.friend.FriendMapper;
 import com.gospel.backend.pojo.SingleMessage;
 import com.gospel.backend.pojo.User;
 import com.gospel.backend.pojo.friend.Friend;
+import com.gospel.backend.pojo.vo.CreateTemporaryVo;
 import com.gospel.backend.pojo.vo.GetFriendAndMessageVo;
 import com.gospel.backend.service.FriendService;
 import com.gospel.backend.service.impl.utils.UserDetailsImpl;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,12 +47,12 @@ public class FriendServiceImpl implements FriendService {
 
         UserDetailsImpl loginUser = (UserDetailsImpl)authentication.getPrincipal();
         User user = loginUser.getUser();
-        Integer myslefId = user.getId();
+        Integer myselfId = user.getId();
 
         List<GetFriendAndMessageVo> getFriendAndMessageVos = new ArrayList<>();
 
         QueryWrapper<Friend> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_from", myslefId);
+        wrapper.eq("user_from", myselfId);
         List<Friend> friends = friendMapper.selectList(wrapper);
         System.out.println(friends);
         
@@ -59,8 +61,8 @@ public class FriendServiceImpl implements FriendService {
             User friendUser = userMapper.selectById(friendId);
 
             QueryWrapper<SingleMessage> queryWrapper = new QueryWrapper<>();
-            queryWrapper.nested(i -> i.eq("user_from", myslefId).eq("user_to", friendId))
-                    .or(i -> i.eq("user_from", friendId).eq("user_to", myslefId))
+            queryWrapper.nested(i -> i.eq("user_from", myselfId).eq("user_to", friendId))
+                    .or(i -> i.eq("user_from", friendId).eq("user_to", myselfId))
                     .orderByDesc("send_time");
             List<SingleMessage> singleMessages = singleMessageMapper.selectList(queryWrapper);
             
@@ -72,13 +74,36 @@ public class FriendServiceImpl implements FriendService {
             GetFriendAndMessageVo getFriendAndMessageVo = new GetFriendAndMessageVo(
                     friendUser,
                     singleMessage,
-                    friend.getCreateTime()
+                    friend.getCreateTime(),
+                    friend.getFriendType()
             );
 
             getFriendAndMessageVos.add(getFriendAndMessageVo);
         }
         
         return R.ok().data("FriendsAndLastMessage", getFriendAndMessageVos);
+    }
+
+    @Override
+    public R createTemporary(CreateTemporaryVo createTemporaryVo) {
+        Integer userFrom = createTemporaryVo.getUserFrom();
+        Integer userTo = createTemporaryVo.getUserTo();
+        Date now = new Date();
+        QueryWrapper<Friend> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_from", userFrom)
+                .and(i -> i.eq("friend_id", userTo));
+        Friend oldFriend = friendMapper.selectOne(wrapper);
+        if(oldFriend != null) {
+            return R.error();
+        }
+        
+        Friend friendA = new Friend(null, userFrom, userTo, now, 0);
+        Friend friendB = new Friend(null, userTo, userFrom, now, 0);
+        
+        friendMapper.insert(friendA);
+        friendMapper.insert(friendB);
+        
+        return R.ok();
     }
 }
 

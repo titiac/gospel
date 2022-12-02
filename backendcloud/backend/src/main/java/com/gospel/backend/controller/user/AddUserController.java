@@ -31,7 +31,4 @@ public class AddUserController {
     public R addOne(@RequestBody AdminAddUserVo adminAddUserVo) {
         return addUserService.addOne(adminAddUserVo);
     }
-    
-    
 }
-

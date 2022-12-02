@@ -24,5 +24,6 @@ public class GetFriendAndMessageVo {
     private SingleMessage singleMessage;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS", timezone = "Asia/Shanghai")
     private Date beginTime;
+    private Integer friendType;
 }
 

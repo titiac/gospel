@@ -80,7 +80,6 @@ public class FriendServiceImpl implements FriendService {
 
             getFriendAndMessageVos.add(getFriendAndMessageVo);
         }
-        
         return R.ok().data("FriendsAndLastMessage", getFriendAndMessageVos);
     }
 

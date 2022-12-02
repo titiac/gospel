@@ -5,9 +5,6 @@ import com.gospel.backend.pojo.vo.*;
 import com.gospel.backend.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 /**
  * @program: backendcloud
  * @description: 与群相关的接口

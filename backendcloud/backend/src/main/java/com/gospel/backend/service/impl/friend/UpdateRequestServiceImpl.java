@@ -54,7 +54,7 @@ public class UpdateRequestServiceImpl implements UpdateRequestService {
             Integer userTo = updateRequestVo.getUserFrom();
             QueryWrapper<Friend> wrapper = new QueryWrapper<>();
             wrapper.eq("user_from", userFrom)
-                    .and(i -> i.eq("user_to", userTo));
+                    .and(i -> i.eq("friend_id", userTo));
             
             Date date=new Date();
             Friend friend1 = friendMapper.selectOne(wrapper);
@@ -65,10 +65,11 @@ public class UpdateRequestServiceImpl implements UpdateRequestService {
                 
                 wrapper = new QueryWrapper<>();
                 wrapper.eq("user_from", userTo)
-                        .and(i -> i.eq("user_to", userFrom));
+                        .and(i -> i.eq("friend_id", userFrom));
                 Friend friend2 = friendMapper.selectOne(wrapper);
                 friend2.setFriendType(1);
                 friend2.setCreateTime(date);
+                friendMapper.updateById(friend2);
                 return R.ok().data("result","成功添加好友");
             } else {
                 Friend friend=new Friend(null, user.getId(), updateRequestVo.getUserFrom(), date, 1);
